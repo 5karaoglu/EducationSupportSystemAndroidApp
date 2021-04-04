@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.LoginActivity">
+    tools:context=".ui.login.LoginActivity">
 
   <TextView
       android:id="@+id/tvUsername"
@@ -54,6 +54,23 @@
       android:layout_margin="10dp"
       app:layout_constraintEnd_toStartOf="@+id/guideline3"
       app:layout_constraintTop_toTopOf="@+id/guideline7" />
+
+  <RelativeLayout
+      android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/blurScreen"
+      android:background="#FEFFFFFF">
+
+    <ProgressBar
+        android:id="@+id/pbLogin"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"/>
+  </RelativeLayout>
 
 
   <androidx.constraintlayout.widget.Guideline

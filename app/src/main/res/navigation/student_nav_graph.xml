@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/student_nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/student_nav_graph"
+    app:startDestination="@id/studentHomeFragment">
 
+    <fragment
+        android:id="@+id/studentHomeFragment"
+        android:name="com.example.ess.ui.student.home.StudentHomeFragment"
+        android:label="StudentHomeFragment" />
+    <fragment
+        android:id="@+id/studentSearchFragment"
+        android:name="com.example.ess.ui.student.search.StudentSearchFragment"
+        android:label="fragment_student_search"
+        tools:layout="@layout/fragment_student_search" />
+    <fragment
+        android:id="@+id/studentNotificationsFragment"
+        android:name="com.example.ess.ui.student.notifications.StudentNotificationsFragment"
+        android:label="fragment_student_notifications"
+        tools:layout="@layout/fragment_student_notifications" />
+    <fragment
+        android:id="@+id/studentProfileFragment"
+        android:name="com.example.ess.ui.student.profile.StudentProfileFragment"
+        android:label="fragment_student_profile"
+        tools:layout="@layout/fragment_student_profile" />
 </navigation>

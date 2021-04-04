@@ -1,4 +1,4 @@
-package com.example.ess.admin
+package com.example.ess.ui.admin
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

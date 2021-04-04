@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "628536419255",
+    "project_id": "essproject-58c25",
+    "storage_bucket": "essproject-58c25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628536419255:android:3e60fee34321e83654fe32",
+        "android_client_info": {
+          "package_name": "com.example.ess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628536419255-ml629c56k0uk9fe7l7movlu5n2irsc59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7gDAXfvjnr576HFB8xnufp2a5t4y0fTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628536419255-ml629c56k0uk9fe7l7movlu5n2irsc59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
