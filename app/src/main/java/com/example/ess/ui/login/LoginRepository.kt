@@ -18,15 +18,6 @@ class LoginRepository
     private var firebaseDatabase: FirebaseDatabase){
     private val TAG = "Login Repository"
 
-    suspend fun signUp(email:String, password: String): Flow<DataState<FirebaseUser?>?> = flow{
-        emit(DataState.Loading)
-        try {
-            firebaseAuth.createUserWithEmailAndPassword(email,password)
-            emit(DataState.Success(firebaseAuth.currentUser))
-        }catch (cause:AuthError){
-            throw AuthError("Signup failed !", cause)
-        }
-    }
 
      fun signIn(email:String, password: String): Flow<DataState<*>?> = flow{
         Log.d(TAG, "signIn: here")

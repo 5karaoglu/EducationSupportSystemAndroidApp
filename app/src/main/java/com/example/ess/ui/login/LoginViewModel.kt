@@ -27,14 +27,6 @@ class LoginViewModel
 
 
 
-    fun signUp(email: String, password: String) = viewModelScope.launch{
-        repository.signUp(email, password)
-            .onEach {
-                    dataState -> _dataState.value = dataState
-            }.catch {
-                    cause -> _dataState.value = DataState.Error(cause)
-            }
-    }
 
     fun signIn(email: String, password: String) = viewModelScope.launch{
         Log.d(TAG, "signIn: $email, $password")

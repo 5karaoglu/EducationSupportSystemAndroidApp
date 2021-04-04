@@ -5,6 +5,15 @@
     <string name="username">Username:</string>
     <string name="password">Password:</string>
     <string name="login">LOGIN</string>
+    <string name="signup">SIGN UP</string>
+    <string name="push_notification">PUSH NOTIFICATION</string>
+    <string name="add_user">ADD USER</string>
+    <string name="admin_panel">ADMIN PANEL</string>
+    <string name="role">Role:</string>
+    <string name="student">Student</string>
+    <string name="teacher">Teacher</string>
+    <string name="admin">Admin</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
