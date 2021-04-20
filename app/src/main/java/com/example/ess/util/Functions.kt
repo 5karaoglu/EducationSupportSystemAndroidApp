@@ -8,14 +8,5 @@ class Functions {
             return Date().time
         }
 
-        fun getUserType(type: Int):String {
-            return when(type){
-                0 -> "Student"
-                1 -> "Teacher"
-                2 -> "Admin"
-                else -> "Student"
-            }
-        }
-
     }
 }

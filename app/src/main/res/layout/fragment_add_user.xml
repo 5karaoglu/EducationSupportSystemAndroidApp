@@ -99,7 +99,6 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:checkedButton="@id/rbStudent"
         android:orientation="horizontal"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.431"
@@ -113,7 +112,8 @@
             android:maxLines="1"
             android:padding="5dp"
             android:text="@string/student"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/rbTeacher"

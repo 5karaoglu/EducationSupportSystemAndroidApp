@@ -9,3 +9,15 @@ data class Notification(
     var descripton: String,
     var timestamp: Long
 )
+class NotificationMapper{
+    companion object{
+        fun modelToMap(notification: Notification): Map<String, Any> {
+            return mapOf<String,Any>(
+                    "priority" to notification.priority,
+                    "title" to notification.title,
+                    "description" to notification.descripton,
+                    "timestamp" to notification.timestamp
+            )
+        }
+    }
+}
