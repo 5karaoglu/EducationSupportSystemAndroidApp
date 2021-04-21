@@ -17,11 +17,10 @@ class StudentActivity : AppCompatActivity() {
     }
 
     private fun bottomNavInit(){
-        val bottomNavView = findViewById<BottomNavigationView>(R.id.bottomNavView)
+        val bottomNavView = findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentStudent) as NavHostFragment
         val navController = navHostFragment.navController
         bottomNavView.background = null
-        bottomNavView.menu.getItem(2).isEnabled = false
         bottomNavView.setupWithNavController(navController)
     }
 }

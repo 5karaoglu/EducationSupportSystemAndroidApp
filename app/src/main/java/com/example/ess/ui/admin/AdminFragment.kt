@@ -19,6 +19,7 @@ class AdminFragment : Fragment(R.layout.fragment_admin) {
 
         val btnPushNotifications = requireActivity().findViewById<Button>(R.id.btnPushNotification)
         val btnAddUser = requireActivity().findViewById<Button>(R.id.btnAddUser)
+        val btnSetUserChannels = requireActivity().findViewById<Button>(R.id.btnSetUserChannels)
 
         btnPushNotifications.setOnClickListener {
             findNavController().navigate(R.id.action_adminFragment_to_adminNotificationsFragment)
@@ -26,6 +27,9 @@ class AdminFragment : Fragment(R.layout.fragment_admin) {
 
         btnAddUser.setOnClickListener {
             findNavController().navigate(R.id.action_adminFragment_to_addUserFragment)
+        }
+        btnSetUserChannels.setOnClickListener {
+            findNavController().navigate(R.id.action_adminFragment_to_adminSetUserChannels)
         }
     }
 

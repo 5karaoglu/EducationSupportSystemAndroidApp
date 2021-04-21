@@ -18,10 +18,24 @@
         android:id="@+id/studentNotificationsFragment"
         android:name="com.example.ess.ui.student.notifications.StudentNotificationsFragment"
         android:label="fragment_student_notifications"
-        tools:layout="@layout/fragment_student_notifications" />
+        tools:layout="@layout/fragment_student_notifications" >
+        <action
+            android:id="@+id/action_studentNotificationsFragment_to_studentAddChannel"
+            app:destination="@id/studentAddChannel" />
+    </fragment>
     <fragment
         android:id="@+id/studentProfileFragment"
         android:name="com.example.ess.ui.student.profile.StudentProfileFragment"
         android:label="fragment_student_profile"
         tools:layout="@layout/fragment_student_profile" />
+    <fragment
+        android:id="@+id/studentAddFragment"
+        android:name="com.example.ess.ui.student.add.StudentAddFragment"
+        android:label="fragment_student_add"
+        tools:layout="@layout/fragment_student_add" />
+    <fragment
+        android:id="@+id/studentAddChannel"
+        android:name="com.example.ess.ui.student.notifications.StudentAddChannel"
+        android:label="fragment_student_add_channel"
+        tools:layout="@layout/fragment_student_add_channel" />
 </navigation>

@@ -89,7 +89,6 @@ class AdminNotificationsFragment : Fragment(R.layout.fragment_admin_notification
         viewModel.notState.observe(viewLifecycleOwner) {
             when (it) {
                 is DataState.Success -> {
-                    Log.d(TAG, "getNotState: ${it.data[0]}, ${it.data[1]}")
                     adapter = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_item,it.data)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinner.adapter = adapter

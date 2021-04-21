@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_adminFragment_to_adminNotificationsFragment"
             app:destination="@id/adminNotificationsFragment" />
+        <action
+            android:id="@+id/action_adminFragment_to_adminSetUserChannels"
+            app:destination="@id/adminSetUserChannels" />
     </fragment>
     <fragment
         android:id="@+id/adminNotificationsFragment"
@@ -41,4 +44,9 @@
             android:id="@+id/action_addUserFragment_to_adminFragment"
             app:destination="@id/adminFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/adminSetUserChannels"
+        android:name="com.example.ess.ui.admin.AdminSetUserChannels"
+        android:label="fragment_admin_set_user_channels"
+        tools:layout="@layout/fragment_admin_set_user_channels" />
 </navigation>

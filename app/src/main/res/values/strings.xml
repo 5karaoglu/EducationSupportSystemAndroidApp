@@ -8,6 +8,8 @@
     <string name="signup">SIGN UP</string>
     <string name="push_notification">PUSH NOTIFICATION</string>
     <string name="add_user">ADD USER</string>
+    <string name="set_user_channels">Set User Channels</string>
+    <string name="add_channel">Add Channel</string>
     <string name="admin_panel">ADMIN PANEL</string>
     <string name="role">Role:</string>
     <string name="student">Student</string>
@@ -16,6 +18,10 @@
     <string name="create_notification_channel">Create Notification Channel</string>
     <string name="notification_channel_name">Notification Channel Name:</string>
     <string name="notification_channel_select">Select Channel:</string>
+
+    <!--
+    fragment admin
+-->
 
 
     <!-- TODO: Remove or change this placeholder text -->
