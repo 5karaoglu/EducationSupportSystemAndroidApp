@@ -32,7 +32,7 @@ class StudentRepository
         try {
             val keys = firebaseDatabase.getReference("NotificationChannels").orderByKey().get().await()
             val list = mutableListOf<String>()
-            for (i in (keys.value as HashMap<String,Any>)){
+            (keys.value as HashMap<String,Any>).forEach { i ->
                 list.add(i.key)
             }
             emit(DataState.Success(list))

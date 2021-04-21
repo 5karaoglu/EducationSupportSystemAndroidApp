@@ -18,6 +18,11 @@
     <string name="create_notification_channel">Create Notification Channel</string>
     <string name="notification_channel_name">Notification Channel Name:</string>
     <string name="notification_channel_select">Select Channel:</string>
+    <string name="title_here">Title Here</string>
+
+
+    <!--teacher-->
+    <string name="subscribe_to_channel">Subscribe to channel</string>
 
     <!--
     fragment admin

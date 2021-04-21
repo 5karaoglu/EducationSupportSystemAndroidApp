@@ -1,5 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/teacher_nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/teacher_nav_graph"
+    app:startDestination="@id/teacherHomeFragment">
 
+    <fragment
+        android:id="@+id/teacherHomeFragment"
+        android:name="com.example.ess.ui.teacher.home.TeacherHomeFragment"
+        android:label="fragment_teacher_home"
+        tools:layout="@layout/fragment_teacher_home" />
+    <fragment
+        android:id="@+id/teacherAddFragment"
+        android:name="com.example.ess.ui.teacher.add.TeacherAddFragment"
+        android:label="fragment_teacher_add"
+        tools:layout="@layout/fragment_teacher_add" />
+    <fragment
+        android:id="@+id/teacherSearchFragment"
+        android:name="com.example.ess.ui.teacher.search.TeacherSearchFragment"
+        android:label="fragment_teacher_search"
+        tools:layout="@layout/fragment_teacher_search" />
+    <fragment
+        android:id="@+id/teacherNotificationFragment"
+        android:name="com.example.ess.ui.teacher.notification.TeacherNotificationFragment"
+        android:label="fragment_teacher_notification"
+        tools:layout="@layout/fragment_teacher_notification" >
+        <action
+            android:id="@+id/action_teacherNotificationFragment_to_teacherPushNotification"
+            app:destination="@id/teacherPushNotification" />
+    </fragment>
+    <fragment
+        android:id="@+id/teacherProfileFragment"
+        android:name="com.example.ess.ui.teacher.profile.TeacherProfileFragment"
+        android:label="fragment_teacher_profile"
+        tools:layout="@layout/fragment_teacher_profile" />
+    <fragment
+        android:id="@+id/teacherPushNotification"
+        android:name="com.example.ess.ui.teacher.notification.TeacherPushNotification"
+        android:label="fragment_teacher_push_notification"
+        tools:layout="@layout/fragment_teacher_push_notification" />
 </navigation>
