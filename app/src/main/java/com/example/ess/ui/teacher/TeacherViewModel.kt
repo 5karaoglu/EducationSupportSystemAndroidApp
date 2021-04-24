@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ess.model.Notification
 import com.example.ess.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -23,6 +24,10 @@ class TeacherViewModel
     val userState : LiveData<DataState<List<String>>>
         get() = _userState
 
+    private val _notState : MutableLiveData<DataState<List<Notification>>> = MutableLiveData()
+    val notState : LiveData<DataState<List<Notification>>>
+        get() = _notState
+
     fun pushNotification(channelName: String, notificationTitle: String) = viewModelScope.launch {
         repository.pushNotification(channelName,notificationTitle)
     }
@@ -41,9 +46,17 @@ class TeacherViewModel
     fun getUserNotificationChannels() = viewModelScope.launch {
         repository.getUserNotificationChannels()
             .catch {
-                     _userState.value = DataState.Error(it)
+                _userState.value = DataState.Error(it)
             }.collect{
-                     _userState.value = it
+                _userState.value = it
+            }
+    }
+    fun getAllNotifications() = viewModelScope.launch {
+        repository.getNotifications()
+            .catch {
+                _notState.value = DataState.Error(it)
+            }.collect{
+                _notState.value = it
             }
     }
 }

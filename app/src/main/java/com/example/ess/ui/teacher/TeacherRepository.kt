@@ -1,5 +1,6 @@
 package com.example.ess.ui.teacher
 
+import android.util.Log
 import com.example.ess.model.Notification
 import com.example.ess.model.NotificationMapper
 import com.example.ess.util.DataState
@@ -21,6 +22,26 @@ class TeacherRepository
     private val firebaseAuth: FirebaseAuth,
     private var firebaseDatabase: FirebaseDatabase
 ){
+
+    suspend fun getNotifications(): Flow<DataState<List<Notification>>> = flow {
+        emit(DataState.Loading)
+        try {
+            val user = firebaseAuth.currentUser
+            val keys = firebaseDatabase.getReference("Teachers/${user?.uid}/SubscribedChannels").orderByKey().get().await()
+            var list = mutableListOf<Notification>()
+            for (i in (keys.value as HashMap<String,Any>)){
+                val notifications = firebaseDatabase.getReference("NotificationChannels/${i.key}").get().await()
+                Log.d("debug", "getNotifications: ${notifications.value}")
+                notifications.children.forEach {
+                    Log.d("debug", "getNotifications:${it.value} ")
+                        list.add(NotificationMapper.mapToModel(it.value as HashMap<String, *>))
+                }
+            }
+            emit(DataState.Success(list))
+        }catch (cause: EssError){
+            emit(DataState.Error(cause))
+        }
+    }
 
     suspend fun getAllNotificationChannels(): Flow<DataState<List<String>>> = flow {
         emit(DataState.Loading)
