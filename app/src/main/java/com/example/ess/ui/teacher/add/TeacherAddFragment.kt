@@ -5,56 +5,105 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.core.os.bundleOf
+import androidx.core.view.get
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.ess.R
+import com.example.ess.databinding.FragmentTeacherAddBinding
+import com.example.ess.databinding.FragmentTeacherHomeBinding
+import com.example.ess.model.IssueShort
+import com.example.ess.ui.teacher.TeacherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TeacherAddFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class TeacherAddFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val viewModel : TeacherViewModel by viewModels()
+    private var _binding : FragmentTeacherAddBinding? = null
+    private val binding get() = _binding!!
+    private var selectedIssue: String? = null
+    private var selectedClass: String? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentTeacherAddBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnShowSubmits.setOnClickListener {
+            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherSubmitsFragment,
+                bundleOf(Pair("selectedIssue",selectedIssue)))
+        }
+        binding.btnShowComments.setOnClickListener {
+            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherSubmitsFragment,
+                bundleOf(Pair("selectedIssue",selectedIssue)))
+        }
+        binding.btnEditIssue.setOnClickListener {
+            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherEditTitleFragment,
+                bundleOf(Pair("selectedIssue",selectedIssue),
+                Pair("selectedClass",selectedClass)
+                ))
+        }
+        var adapter : ArrayAdapter<String>
+        var adapter2: ArrayAdapter<String>
+        viewModel.classList.observe(viewLifecycleOwner){
+            adapter = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_item,it)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerClasses.adapter = adapter
+            binding.pb.visibility = View.GONE
+        }
+        viewModel.getClassList()
+        binding.spinnerClasses.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedClass = binding.spinnerClasses.selectedItem.toString()
+                viewModel.getIssueList(selectedClass!!)
+                binding.pb.visibility = View.VISIBLE
+                binding.btnCreateIssue.isEnabled = true
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+        viewModel.issueList.observe(viewLifecycleOwner){
+            adapter2 = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_item,it)
+            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerIssues.adapter = adapter2
+            binding.pb.visibility = View.GONE
+        }
+        binding.spinnerIssues.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (binding.spinnerIssues.selectedItem != null){
+                   selectedIssue = binding.spinnerIssues.selectedItem.toString()
+                }
+                binding.btnShowSubmits.isEnabled = true
+                binding.btnShowComments.isEnabled = true
+                binding.btnEditIssue.isEnabled = true
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_add, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TeacherAddFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TeacherAddFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

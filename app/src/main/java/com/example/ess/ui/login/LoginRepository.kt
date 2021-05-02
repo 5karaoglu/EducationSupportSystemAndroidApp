@@ -25,7 +25,7 @@ class LoginRepository
         try {
             Log.d(TAG, "signIn: try")
             val auth = firebaseAuth.signInWithEmailAndPassword(email,password).await()
-            val userType = firebaseDatabase.getReference("Users").child(auth.user!!.uid).get().await()
+            val userType = firebaseDatabase.getReference("Users").child(auth.user!!.uid).child("type").get().await()
             if (userType.exists()) emit(DataState.Success(userType.getValue(String::class.java)));
             else emit(DataState.Error(EssError("User dont have a role ! Contact with your admin.",Throwable())))
             /*Log.d(

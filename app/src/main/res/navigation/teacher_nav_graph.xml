@@ -14,12 +14,14 @@
         android:id="@+id/teacherAddFragment"
         android:name="com.example.ess.ui.teacher.add.TeacherAddFragment"
         android:label="fragment_teacher_add"
-        tools:layout="@layout/fragment_teacher_add" />
-    <fragment
-        android:id="@+id/teacherSearchFragment"
-        android:name="com.example.ess.ui.teacher.search.TeacherSearchFragment"
-        android:label="fragment_teacher_search"
-        tools:layout="@layout/fragment_teacher_search" />
+        tools:layout="@layout/fragment_teacher_add" >
+        <action
+            android:id="@+id/action_teacherAddFragment_to_teacherEditTitleFragment"
+            app:destination="@id/teacherEditTitleFragment" />
+        <action
+            android:id="@+id/action_teacherAddFragment_to_teacherSubmitsFragment"
+            app:destination="@id/teacherSubmitsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/teacherNotificationFragment"
         android:name="com.example.ess.ui.teacher.notification.TeacherNotificationFragment"
@@ -33,10 +35,42 @@
         android:id="@+id/teacherProfileFragment"
         android:name="com.example.ess.ui.teacher.profile.TeacherProfileFragment"
         android:label="fragment_teacher_profile"
-        tools:layout="@layout/fragment_teacher_profile" />
+        tools:layout="@layout/fragment_teacher_profile" >
+        <action
+            android:id="@+id/action_teacherProfileFragment_to_teacherEditProfileFragment"
+            app:destination="@id/teacherEditProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/teacherPushNotification"
         android:name="com.example.ess.ui.teacher.notification.TeacherPushNotification"
         android:label="fragment_teacher_push_notification"
         tools:layout="@layout/fragment_teacher_push_notification" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.ess.ui.common.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/teacherEditProfileFragment"
+        android:name="com.example.ess.ui.teacher.profile.TeacherEditProfileFragment"
+        android:label="fragment_teacher_edit_profile"
+        tools:layout="@layout/fragment_teacher_edit_profile" >
+        <action
+            android:id="@+id/action_teacherEditProfileFragment_to_teacherProfileFragment"
+            app:destination="@id/teacherProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/teacherEditTitleFragment"
+        android:name="com.example.ess.ui.teacher.add.TeacherEditTitleFragment"
+        android:label="fragment_teacher_edit_title"
+        tools:layout="@layout/fragment_teacher_edit_title" >
+        <action
+            android:id="@+id/action_teacherEditTitleFragment_to_teacherAddFragment"
+            app:destination="@id/teacherAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/teacherSubmitsFragment"
+        android:name="com.example.ess.ui.teacher.add.TeacherSubmitsFragment"
+        android:label="fragment_teacher_submits"
+        tools:layout="@layout/fragment_teacher_submits" />
 </navigation>

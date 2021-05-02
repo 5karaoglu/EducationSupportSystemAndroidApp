@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.teacher.home.TeacherHomeFragment">
+    tools:context=".ui.common.search.SearchFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -16,20 +16,31 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/home"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+
+            <EditText
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:maxLines="1"
+                android:inputType="text"
+                android:textSize="12sp"
+                android:hint="@string/search_something"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ibSearch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageButton
-                android:id="@+id/btnMessages"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:id="@+id/ibSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/ic_baseline_inbox_24"
+                android:src="@drawable/ic_outline_search_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -37,15 +48,14 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerTeacherNotifications"
-        android:layout_marginTop="50dp"
+        android:id="@+id/recyclerSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        tools:listitem="@layout/home_single_item" />
+        tools:listitem="@layout/search_single_item"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

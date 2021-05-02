@@ -30,7 +30,7 @@ class AdminRepository
         emit(DataState.Loading)
         try {
             val auth = firebaseAuth.createUserWithEmailAndPassword(email,password).await()
-            firebaseDatabase.getReference("Users").child(auth.user!!.uid).setValue(userType).await()
+            firebaseDatabase.getReference("Users").child(auth.user!!.uid).child("type").setValue(userType).await()
             emit(DataState.Success(firebaseAuth.currentUser))
         }catch (cause: EssError){
             emit(DataState.Error(cause))
