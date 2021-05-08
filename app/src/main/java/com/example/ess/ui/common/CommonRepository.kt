@@ -1,17 +1,18 @@
 package com.example.ess.ui.common
 
-import com.example.ess.model.Message
-import com.example.ess.model.MessageMapper
-import com.example.ess.model.UserShort
-import com.example.ess.model.UserShortMapper
+import android.util.Log
+import com.example.ess.model.*
 import com.example.ess.util.DataState
 import com.example.ess.util.EssError
 import com.example.ess.util.Functions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
+import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -24,13 +25,90 @@ class CommonRepository
 @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private var firebaseDatabase: FirebaseDatabase
-){
+): RepoHelper{
+
+    suspend fun getUser(uid:String): Flow<DataState<User>> = flow {
+        emit(DataState.Loading)
+        try {
+            val snapshot = firebaseDatabase.getReference("Users/$uid").get().await()
+            emit(DataState.Success(
+                UserMapper.mapToModel(
+                    snapshot.value as HashMap<String, *>
+                )
+            ))
+        }catch (cause:EssError){
+            emit(DataState.Error(cause))
+        }
+    }
+
+    /*@ExperimentalCoroutinesApi
+    suspend fun getMessages(chatID: String): Flow<DataState<Message>> = callbackFlow {
+        offer(DataState.Loading)
+            val snapshot = firebaseDatabase.getReference("Contacts/$chatID").addChildEventListener(object : ChildEventListener{
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val message = MessageMapper.mapToModel(snapshot.value as HashMap<String, *>)
+                    offer(DataState.Success(message))
+                }
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                }
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                }
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                }
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+        awaitClose { }
+    }*/
+
+    @ExperimentalCoroutinesApi
+    override fun getMessages(chatID: String) = callbackFlow<DataState<List<Message>>> {
+        val list = mutableListOf<Message>()
+        val listener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                this@callbackFlow.offer(DataState.Loading)
+                Log.d("debug", "onChildAdded0: childadded")
+                list.add(MessageMapper.mapToModel(snapshot.value as HashMap<String, *>))
+
+                this@callbackFlow.offer(DataState.Success(list))
+
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("debug", "onChildAdded: childchanged")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.d("debug", "onChildAdded: childremoved")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("debug", "onChildAdded: childmoved")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.offer(DataState.Error(Throwable(error.message)))
+            }
+        }
+        firebaseDatabase.getReference("contacts/$chatID").addChildEventListener(listener)
+        Log.d("debug", "getMessages: here")
+
+        awaitClose { firebaseDatabase.getReference("contacts/$chatID").removeEventListener(listener)
+            Log.d("debug", "getMessages: removed")}
+    }
+    /*suspend fun updateLastMessage(contact: Contact,lastMessage:Message) = withContext(Dispatchers.IO){
+        val myKey = firebaseDatabase.getReference("Users/${contact.myUid}/contacts")..orderByChild("chat_id").equalTo(contact.chatId).get().await()
+        firebaseDatabase.getReference("Users/${contact.myUid}/contacts/${myKey.value}").child("last_message").setValue(lastMessage.message)
+        val receiverKey = firebaseDatabase.getReference("Users/${contact.receiverUid}/contacts").orderByChild("chat_id").equalTo(contact.chatId).get().await()
+        firebaseDatabase.getReference("Users/${contact.receiverUid}/contacts/${receiverKey.chvalue}").child("last_message").setValue(lastMessage.message)
+    }*/
+
 
     suspend fun getUsers(query: String): Flow<DataState<List<UserShort>>> = flow {
         emit(DataState.Loading)
         try {
             val list = mutableListOf<UserShort>()
-            val users = firebaseDatabase.getReference("Users").orderByChild("name").equalTo(query).get().await()
+            val users = firebaseDatabase.getReference("Users").orderByChild("name").startAt(query).get().await()
             users.children.forEach {
                 list.add(UserShortMapper.mapToModel(it.value as HashMap<String, *>))
             }
@@ -40,26 +118,96 @@ class CommonRepository
         }
     }
 
+    suspend fun getContacts():Flow<DataState<List<Contact>>> = flow {
+        emit(DataState.Loading)
+        try {
+            val list = mutableListOf<Contact>()
+            val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/contacts").get().await()
+            snapshot.children.forEach {
+                list.add(ContactMapper.mapToModel(
+                        it.value as HashMap<String, *>
+                ))
+            }
+            emit(DataState.Success(list))
+        }catch (cause:EssError){
+            emit(DataState.Error(cause))
+        }
+    }
+    /*suspend fun getContact(receiverUid: String) = withContext(Dispatchers.IO) {
 
-    suspend fun createMessaging(receiverUid:String) = withContext(Dispatchers.IO){
+        var contact: Contact? = null
+        val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/contacts").orderByChild("receiver_uid").equalTo(receiverUid).get().await()
+        snapshot.children.forEach {
+            contact = ContactMapper.mapToModel(it.value as HashMap<String, *>)
+        }
+        if (contact == null){
+            createContact(receiverUid)
+        }
+         return@withContext  contact
+    }*/
 
-        val chatID = firebaseDatabase.getReference("Messages").push()
-        //setting data for message sender
-        firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/Messages/$receiverUid").setValue(chatID.key)
-        //setting data for message receiver
-        firebaseDatabase.getReference("Users/$receiverUid/Messages/${firebaseAuth.currentUser!!.uid}").setValue(chatID.key)
-        return@withContext chatID.key
+
+    suspend fun getContact(receiverUid:String) = withContext(Dispatchers.IO){
+        var user: User? = null
+        var contact: Contact? = null
+        val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/contacts")
+                .orderByChild("receiver_uid").equalTo(receiverUid).get().await()
+        snapshot.children.forEach {
+            contact = ContactMapper.mapToModel(it.value as HashMap<String, *>)
+        }
+        if (contact == null){
+            val receiver = firebaseDatabase.getReference("Users/$receiverUid").get().await()
+            user = UserMapper.mapToModel(receiver.value as HashMap<String, *>)
+
+            val chatID = firebaseDatabase.getReference("contacts").push()
+            //setting data for message sender
+            firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/contacts").push().updateChildren(
+                    ContactMapper.modelToMap(
+                            Contact(
+                                    chatId = chatID.key!!,
+                                    imageUrl = user!!.imageURL!!,
+                                    lastMessage = "",
+                                    myUid = firebaseAuth.currentUser!!.uid,
+                                    name = user!!.name!!,
+                                    receiverUid = user!!.uid!!
+                            )
+                    )
+            )
+            //setting data for message receiver
+            firebaseDatabase.getReference("Users/$receiverUid/contacts").push().updateChildren(
+                    ContactMapper.modelToMap(
+                            Contact(
+                                    chatId = chatID.key!!,
+                                    imageUrl = firebaseAuth.currentUser!!.photoUrl.toString(),
+                                    lastMessage = "",
+                                    myUid = user!!.uid!!,
+                                    name = firebaseAuth.currentUser!!.displayName!!,
+                                    receiverUid = firebaseAuth.currentUser!!.uid
+                            )
+                    )
+            )
+            contact = Contact(chatId = chatID.key!!, imageUrl = user!!.imageURL!!,
+                    lastMessage = "", myUid = firebaseAuth.currentUser!!.uid,
+                    name = user!!.name!!, receiverUid = user!!.uid!!)
+            return@withContext contact
+        }else{
+            return@withContext contact
+        }
     }
 
     suspend fun sendMessage(chatID: String,message: String){
-        firebaseDatabase.getReference("Messages/$chatID").push().updateChildren(
+        firebaseDatabase.getReference("contacts/$chatID").push().updateChildren(
                 MessageMapper.modelToMap(
                         Message(
                                 timestamp = Functions.getCurrentDate().toString(),
-                                message = message
+                                message = message,
+                                whoSent = firebaseAuth.currentUser!!.uid
                         )
                 )
-        )
+        ).await()
     }
 
+}
+interface RepoHelper{
+    fun getMessages(chatID: String): Flow<DataState<List<Message>>>
 }

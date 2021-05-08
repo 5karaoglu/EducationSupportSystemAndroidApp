@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
                 is DataState.Success -> {
                     Toast.makeText(this, "Authorization Success !", Toast.LENGTH_SHORT).show()
                     loadingScreen.visibility = View.GONE
+                    viewModel.subscribeChannels()
                     when(it.data){
                         "Student" -> {
                             val intent = Intent(this, StudentActivity::class.java)

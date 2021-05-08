@@ -8,15 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ess.R
 import com.example.ess.databinding.FragmentSearchBinding
+import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(),
+SearchAdapter.OnItemClickListener{
 
     private var _binding : FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -39,9 +41,10 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val adapter = SearchAdapter()
-
+        val adapter = SearchAdapter(this)
+        binding.recyclerSearch.adapter = adapter
+        binding.recyclerSearch.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerSearch.addItemDecoration(SearchItemDecoration())
 
         binding.ibSearch.setOnClickListener {
             viewModel.getUsers(binding.etSearch.text.toString())
@@ -52,13 +55,15 @@ class SearchFragment : Fragment() {
                 is DataState.Loading -> Log.d(TAG, "onViewCreated: loading")
                 is DataState.Error -> Toast.makeText(requireContext(), "Error ! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                 is DataState.Success -> {
-                    Log.d(TAG, "onViewCreated: ${it.data[0].name}")
-                    binding.recyclerSearch.adapter = adapter
-                    binding.recyclerSearch.layoutManager = LinearLayoutManager(requireContext())
-                    binding.recyclerSearch.addItemDecoration(SearchItemDecoration())
+
                     adapter.submitList(it.data)
                 }
             }
         }
+    }
+
+    override fun onItemClicked(userShort: UserShort) {
+        val action = SearchFragmentDirections.actionSearchFragmentToShowProfileFragment(userShort,null)
+        findNavController().navigate(action)
     }
 }

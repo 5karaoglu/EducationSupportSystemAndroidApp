@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ess.model.IssueShort
-import com.example.ess.model.Notification
-import com.example.ess.model.User
+import com.example.ess.model.*
 import com.example.ess.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
@@ -65,6 +63,14 @@ class TeacherViewModel
     private val _issueUpdateState : MutableLiveData<DataState<String>> = MutableLiveData()
     val issueUpdateState : LiveData<DataState<String>>
         get() = _issueUpdateState
+
+    private val _feedState : MutableLiveData<DataState<List<FeedItem>>> = MutableLiveData()
+    val feedState : LiveData<DataState<List<FeedItem>>>
+        get() = _feedState
+
+    private val _commentsState : MutableLiveData<DataState<List<Comment>>> = MutableLiveData()
+    val commentsState : LiveData<DataState<List<Comment>>>
+        get() = _commentsState
 
     fun pushNotification(channelName: String, notificationTitle: String) = viewModelScope.launch {
         repository.pushNotification(channelName,notificationTitle)
@@ -136,5 +142,17 @@ class TeacherViewModel
             .collect{
                 _issueUpdateState.value = it
             }
+    }
+    fun getFeed() = viewModelScope.launch {
+        repository.getFeed()
+                .collect{
+                    _feedState.value = it
+                }
+    }
+    fun getComments(feedItem: FeedItem) = viewModelScope.launch {
+        repository.getComments(feedItem)
+                .collect{
+                    _commentsState.value = it
+                }
     }
 }

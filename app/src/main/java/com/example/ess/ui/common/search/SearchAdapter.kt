@@ -12,21 +12,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ess.R
 import com.example.ess.databinding.FragmentSearchBinding
 import com.example.ess.databinding.SearchSingleItemBinding
+import com.example.ess.model.Message
 import com.example.ess.model.Notification
 import com.example.ess.model.UserShort
 import com.squareup.picasso.Picasso
 
-class SearchAdapter(): ListAdapter<UserShort,SearchAdapter.SearchViewHolder>(SearchComparator()) {
+class SearchAdapter(private val listener:OnItemClickListener): ListAdapter<UserShort,SearchAdapter.SearchViewHolder>(SearchComparator()) {
     
     class SearchViewHolder(private val binding: SearchSingleItemBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(userShort: UserShort){
+        fun bind(userShort: UserShort,listener: OnItemClickListener){
             Log.d("SearchViewHolde", "bind: here ${userShort.name}")
             binding.tvUsername.text = userShort.name
             Picasso.get()
                     .load(userShort.imageURL)
                     .fit().centerInside()
                     .into(binding.ivUser)
+
+            itemView.setOnClickListener{
+                listener.onItemClicked(userShort)
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -37,7 +42,7 @@ class SearchAdapter(): ListAdapter<UserShort,SearchAdapter.SearchViewHolder>(Sea
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val currentNotification = getItem(position)
-        holder.bind(currentNotification)
+        holder.bind(currentNotification,listener)
     }
     class SearchComparator(): DiffUtil.ItemCallback<UserShort>(){
         override fun areItemsTheSame(oldItem: UserShort, newItem: UserShort): Boolean {
@@ -48,5 +53,8 @@ class SearchAdapter(): ListAdapter<UserShort,SearchAdapter.SearchViewHolder>(Sea
             return false
         }
 
+    }
+    interface OnItemClickListener{
+        fun onItemClicked(userShort: UserShort)
     }
 }

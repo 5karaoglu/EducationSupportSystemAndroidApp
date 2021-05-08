@@ -1,6 +1,8 @@
 package com.example.ess.ui.teacher
 
 import android.net.Uri
+import android.provider.ContactsContract
+import android.service.autofill.Dataset
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.ess.model.*
@@ -10,6 +12,7 @@ import com.example.ess.util.Functions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,8 +33,66 @@ class TeacherRepository
 @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private var firebaseDatabase: FirebaseDatabase,
-    private var firebaseStorage: FirebaseStorage
+    private var firebaseStorage: FirebaseStorage,
+    private val firebaseMessaging: FirebaseMessaging
 ){
+
+    suspend fun getComments(feedItem: FeedItem): Flow<DataState<List<Comment>>> = flow {
+        emit(DataState.Loading)
+        val list = mutableListOf<Comment>()
+        try {
+            val snapshot = firebaseDatabase.getReference("Classes/Math").orderByChild("title").equalTo(feedItem.title).get().await()
+            Log.d("TAG", "getComments: $snapshot")
+            val comments = snapshot.child("randomkey").child("comments").getValue(Comments::class.java)
+            Log.d("TAG", "getComments: ${snapshot.child("randomkey").child("comments").value}")
+            Log.d("debug", "getComments: ${comments!!}")
+           /* comments?.comments?.forEach {
+                list.add(it.value)
+            }*/
+            if (list.isEmpty()){
+                    Log.d("debug", "getComments: empty")
+            }else{
+                emit(DataState.Success(list))
+            }
+
+        }catch (cause:EssError){
+            emit(DataState.Error(cause))
+        }
+    }
+
+    suspend fun getFeed(): Flow<DataState<List<FeedItem>>> = flow {
+        emit(DataState.Loading)
+        val feedList = mutableListOf<FeedItem>()
+        try {
+            val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}")
+                    .child("Classes").get().await()
+            snapshot.children.forEach {
+               val currentClass = firebaseDatabase.getReference("Classes/${it.key}").get().await()
+                currentClass.children.forEach { feed ->
+                    feedList.add(FeedItem(
+                            title = feed.child("title").value as String,
+                            description = feed.child("description").value as String?,
+                            downloadUrl = feed.child("download_url").value as String?,
+                            fileName = feed.child("file_name").value as String?,
+                            publishedBy = feed.child("published_by").value as String,
+                            publisherUid = feed.child("publisher_uid").value as String?,
+                            publisherImageUrl= feed.child("publisher_image_url").value as String?,
+                            deadline = feed.child("deadline").value as String,
+                            commentsCount = feed.child("comments").childrenCount.toString(),
+                            subscriptionsCount = feed.child("subscriptions").childrenCount.toString()
+                    ))
+                }
+            }
+            if (feedList.isNotEmpty()){
+                emit(DataState.Success(feedList))
+
+            }else{
+                Log.d("debug", "getFeed:Listempty")
+            }
+        }catch (cause: EssError){
+            emit(DataState.Error(cause))
+        }
+    }
 
     suspend fun createIssue(className:String,title:String,description:String,
                             deadline:String,fileName: String?,downloadUrl:String?)
@@ -238,6 +299,6 @@ class TeacherRepository
     }
     suspend fun subscribeToChannel(channelName: String) = withContext(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
-            firebaseDatabase.getReference("Teachers/${user?.uid}/SubscribedChannels/$channelName").setValue(true).await()
+            firebaseDatabase.getReference("Users/${user?.uid}/SubscribedChannels/$channelName").setValue(true).await()
     }
 }

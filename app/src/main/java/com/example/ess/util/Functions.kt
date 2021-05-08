@@ -16,6 +16,12 @@ class Functions {
             cal.timeInMillis = timestamp.toLong()
             return simpleDateFormat.format(cal.time)
         }
+        fun tsToHm(timestamp: String): String{
+            var simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+            var cal = Calendar.getInstance()
+            cal.timeInMillis = timestamp.toLong()
+            return simpleDateFormat.format(cal.time)
+        }
 
     }
 }

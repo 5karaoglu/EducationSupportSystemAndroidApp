@@ -40,4 +40,7 @@ class LoginViewModel
             }
 
     }
+    fun subscribeChannels() = viewModelScope.launch{
+        repository.subscribeChannels()
+    }
 }
