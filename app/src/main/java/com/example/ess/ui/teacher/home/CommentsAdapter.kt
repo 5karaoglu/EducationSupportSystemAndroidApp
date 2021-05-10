@@ -1,12 +1,17 @@
 package com.example.ess.ui.teacher.home
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ess.R
+import com.example.ess.databinding.CommentsSingleItemBinding
 import com.example.ess.databinding.HomeSingleItemBinding
+import com.example.ess.databinding.SubcommentSingleItemBinding
 import com.example.ess.model.Comment
 import com.squareup.picasso.Picasso
 
@@ -15,34 +20,30 @@ class CommentsAdapter (
 ): ListAdapter<Comment, CommentsAdapter.CommentsViewHolder>(CommentsComparator()) {
 
 
-    class CommentsViewHolder(private val binding: HomeSingleItemBinding): RecyclerView.ViewHolder(binding.root){
+    class CommentsViewHolder(private val binding: CommentsSingleItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(comment: Comment, listener: OnItemClickListener){
             Log.d("debug", "bind: binded")
+            binding.tvName.text = comment.name
+            binding.tvComment.text = comment.comment
+            binding.tvSeeReplies.text = "See all ${comment.subCommentsCount} comments"
 
-            Picasso.get()
-                    .load(comment.imageUrl)
-                    .fit().centerInside()
-                    .into(binding.ivUser)
+            if (comment.imageUrl.isNotEmpty()){
+                Picasso.get()
+                        .load(comment.imageUrl)
+                        .fit().centerInside()
+                        .into(binding.iv)
+            }
+            binding.tvSeeReplies.setOnClickListener {
+                listener.onTvClicked(comment)
+            }
 
-            itemView.setOnClickListener {
-                listener.onViewClicked(comment)
-            }
-            binding.ibComment.setOnClickListener {
-                listener.onCommentsClicked(comment)
-            }
-            binding.ibPublish.setOnClickListener {
-                listener.onSubscriptionsClicked(comment)
-            }
-            binding.ivUser.setOnClickListener {
-                listener.onIvClicked(comment)
-            }
         }
     }
 
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentsViewHolder {
-        return CommentsViewHolder( HomeSingleItemBinding.inflate(LayoutInflater.from(parent.context),
+        return CommentsViewHolder( CommentsSingleItemBinding.inflate(LayoutInflater.from(parent.context),
                 parent,false))}
 
 
@@ -62,10 +63,7 @@ class CommentsAdapter (
 
     }
     interface OnItemClickListener{
-        fun onViewClicked(comment: Comment)
-        fun onCommentsClicked(comment: Comment)
-        fun onSubscriptionsClicked(comment: Comment)
-        fun onIvClicked(comment: Comment)
+        fun onTvClicked(comment: Comment)
 
     }
 

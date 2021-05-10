@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.example.ess.R
 import com.example.ess.databinding.HomeSingleItemBinding
 import com.example.ess.model.FeedItem
 import com.example.ess.util.Functions
@@ -27,12 +28,15 @@ class FeedAdapter (
             binding.btnAttachedFile.text = feedItem.fileName
             binding.tvDescription.text = feedItem.description
             binding.tvTitle.text = feedItem.title
-            binding.tvSubscriptions.text = feedItem.subscriptionsCount
+            binding.tvSubmits.text = feedItem.submitsCount
             binding.tvComments.text = feedItem.commentsCount
-            Picasso.get()
-                    .load(feedItem.publisherImageUrl)
-                    .fit().centerInside()
-                    .into(binding.ivUser)
+            if (feedItem.publisherImageUrl.isNotEmpty()){
+                Picasso.get()
+                        .load(feedItem.publisherImageUrl)
+                        .error(R.drawable.ic_outline_person_24)
+                        .fit().centerInside()
+                        .into(binding.ivUser)
+            }
 
             itemView.setOnClickListener {
                 listener.onViewClicked(feedItem)
@@ -41,7 +45,7 @@ class FeedAdapter (
                 listener.onCommentsClicked(feedItem)
             }
             binding.ibPublish.setOnClickListener {
-                listener.onSubscriptionsClicked(feedItem)
+                listener.onSubmitsClicked(feedItem)
             }
             binding.ivUser.setOnClickListener {
                 listener.onIvClicked(feedItem)
@@ -74,7 +78,7 @@ class FeedAdapter (
     interface OnItemClickListener{
         fun onViewClicked(feedItem: FeedItem)
         fun onCommentsClicked(feedItem: FeedItem)
-        fun onSubscriptionsClicked(feedItem: FeedItem)
+        fun onSubmitsClicked(feedItem: FeedItem)
         fun onIvClicked(feedItem: FeedItem)
 
     }

@@ -56,6 +56,10 @@ class TeacherViewModel
     val issue : LiveData<IssueShort>
         get() = _issue
 
+    private val _issueKey : MutableLiveData<String> = MutableLiveData()
+    val issueKey : LiveData<String>
+        get() = _issueKey
+
     private val _fileUploadState : MutableLiveData<DataState<String>> = MutableLiveData()
     val fileUploadState : LiveData<DataState<String>>
         get() = _fileUploadState
@@ -71,6 +75,10 @@ class TeacherViewModel
     private val _commentsState : MutableLiveData<DataState<List<Comment>>> = MutableLiveData()
     val commentsState : LiveData<DataState<List<Comment>>>
         get() = _commentsState
+
+    private val _submitsState : MutableLiveData<DataState<List<Submit>>> = MutableLiveData()
+    val submitsState : LiveData<DataState<List<Submit>>>
+        get() = _submitsState
 
     fun pushNotification(channelName: String, notificationTitle: String) = viewModelScope.launch {
         repository.pushNotification(channelName,notificationTitle)
@@ -143,6 +151,9 @@ class TeacherViewModel
                 _issueUpdateState.value = it
             }
     }
+    fun getIssueKey(selectedClass:String) = viewModelScope.launch {
+        _issueKey.postValue(repository.getIssueKey(selectedClass))
+    }
     fun getFeed() = viewModelScope.launch {
         repository.getFeed()
                 .collect{
@@ -153,6 +164,12 @@ class TeacherViewModel
         repository.getComments(feedItem)
                 .collect{
                     _commentsState.value = it
+                }
+    }
+    fun getSubmits(feedItem: FeedItem) = viewModelScope.launch {
+        repository.getSubmits(feedItem)
+                .collect{
+                    _submitsState.value = it
                 }
     }
 }

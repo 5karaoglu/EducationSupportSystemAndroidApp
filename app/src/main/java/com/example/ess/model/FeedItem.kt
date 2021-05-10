@@ -2,22 +2,47 @@ package com.example.ess.model
 
 import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
+import com.google.firebase.database.PropertyName
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
+import java.io.Serializable
+import java.sql.Timestamp
 
 @IgnoreExtraProperties
 @Parcelize
 data class FeedItem(
-        val title: String,
-        val description: String?,
-        val downloadUrl: String?,
-        val fileName: String?,
-        val publishedBy: String,
-        val publisherUid: String?,
-        val publisherImageUrl: String?,
-        val deadline: String,
-        val commentsCount: String,
-        val subscriptionsCount: String
+        var path: String = "",
+        val title: String = "",
+        val description: String = "",
+        @get:PropertyName("download_url")
+        @set:PropertyName("download_url")
+        var downloadUrl: String = "",
+        @get:PropertyName("file_name")
+        @set:PropertyName("file_name")
+        var fileName: String = "",
+        @get:PropertyName("published_by")
+        @set:PropertyName("published_by")
+        var publishedBy: String = "",
+        @get:PropertyName("publisher_uid")
+        @set:PropertyName("publisher_uid")
+        var publisherUid: String = "",
+        @get:PropertyName("publisher_image_url")
+        @set:PropertyName("publisher_image_url")
+        var publisherImageUrl: String = "",
+        val deadline: String = "",
+        var commentsCount: String = "",
+        var submitsCount: String = ""
 ):Parcelable
+
+data class Submit(
+        var path: String = "",
+        var filePath:String = "",
+        var imageUrl:String = "",
+        var name:String = "",
+        var uid:String = "",
+        var timestamp: String = ""
+)
+/*
 class FeedMapper{
     companion object{
 
@@ -36,4 +61,4 @@ class FeedMapper{
             )
         }
     }
-}
+}*/

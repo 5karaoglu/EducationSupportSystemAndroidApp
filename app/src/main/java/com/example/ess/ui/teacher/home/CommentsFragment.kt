@@ -18,6 +18,7 @@ import com.example.ess.model.Comment
 import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,11 +37,15 @@ CommentsAdapter.OnItemClickListener{
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommentsBinding.inflate(inflater,container,false)
+        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        bottomBar.visibility = View.GONE
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        bottomBar.visibility = View.GONE
         _binding = null
     }
 
@@ -70,19 +75,9 @@ CommentsAdapter.OnItemClickListener{
         }
     }
 
-    override fun onViewClicked(comment: Comment) {
-        TODO("Not yet implemented")
-    }
 
-    override fun onCommentsClicked(comment: Comment) {
-        TODO("Not yet implemented")
-    }
 
-    override fun onSubscriptionsClicked(comment: Comment) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onIvClicked(comment: Comment) {
+    override fun onTvClicked(comment: Comment) {
         TODO("Not yet implemented")
     }
 }

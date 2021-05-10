@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
@@ -25,15 +25,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
 @AndroidEntryPoint
-class TeacherEditTitleFragment : Fragment(),
-        DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener{
+class TeacherCreateIssueFragment : Fragment(),
+    DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener{
 
-    private val TAG = "TeacherEditTitleFragment"
+    private val TAG = "TeacherCreateIssueFragment"
     private val viewModel : TeacherViewModel by viewModels()
     private var _binding : FragmentTeacherEditTitleBinding? = null
     private val binding get() = _binding!!
-    private var selectedIssue: String? = null
     private var selectedClass: String? = null
     val c = Calendar.getInstance()
     var year = c.get(Calendar.YEAR)
@@ -60,38 +59,48 @@ class TeacherEditTitleFragment : Fragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         files = registerForActivityResult(ActivityResultContracts.GetContent()){
-            Log.d("debug", "onCreate: $selectedClass,$selectedIssue")
-            viewModel.uploadFile(it,selectedClass!!,binding.etTitle.text.toString()!!,it.lastPathSegment!!)
-            fileName = it.lastPathSegment
-            binding.tvFileName.text = fileName
+            if (!binding.etTitle.text.isNullOrEmpty()){
+                viewModel.uploadFile(it,selectedClass!!,binding.etTitle.text.toString(),it.lastPathSegment!!)
+                fileName = it.lastPathSegment
+                binding.tvFileName.text = fileName
+            }else{
+                Toast.makeText(requireContext(), "Error! Title cant be empty.", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!arguments?.isEmpty!!){
-            selectedIssue = requireArguments().getString("selectedIssue")
-            selectedClass = requireArguments().getString("selectedClass")
+        selectedClass = requireArguments().getString("selectedClass")
+        binding.btnChooseFile.setOnClickListener {
+            chooseFile()
         }
-        viewModel.getIssue(selectedClass!!, selectedIssue!!)
-
         binding.tvDeadlineChange.setOnClickListener {
             DatePickerDialog(requireContext(),this,year,month,day).show()
         }
 
-        viewModel.issue.observe(viewLifecycleOwner){
-            fileName = it.fileName
-            downloadUrl = it.downloadUrl
-            binding.etTitle.setText(it.title)
-            binding.etDes.setText(it.description)
-            deadline = it.deadline
-            binding.tvDate.text = Functions.tsToDate(deadline!!)
-            binding.tvFileName.text = it.fileName
+        binding.ibUpdate.setOnClickListener {
+            if (!binding.etTitle.text.isNullOrEmpty() && !binding.etDes.text.isNullOrEmpty() &&
+                    !deadline.isNullOrEmpty() && !selectedClass.isNullOrEmpty()){
+                viewModel.createIssue(selectedClass!!,binding.etTitle.text.toString(),
+                        binding.etDes.text.toString(),deadline!!,fileName, downloadUrl)
+            }else{
+                Toast.makeText(requireContext(), "You have to fill all fields!", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
         }
-
-        binding.btnChooseFile.setOnClickListener {
-            chooseFile()
+        viewModel.issueUpdateState.observe(viewLifecycleOwner){
+            when(it){
+                is DataState.Loading -> {binding.pb.visibility = View.VISIBLE}
+                is DataState.Error -> Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
+                is DataState.Success -> {
+                    Toast.makeText(requireContext(), it.data, Toast.LENGTH_SHORT).show()
+                    binding.pb.visibility = View.GONE
+                    findNavController().navigate(R.id.action_teacherCreateIssueFragment_to_teacherAddFragment)
+                }
+            }
         }
         viewModel.fileUploadState.observe(viewLifecycleOwner){
             when(it){
@@ -99,65 +108,21 @@ class TeacherEditTitleFragment : Fragment(),
                     Log.d(TAG, "onViewCreated: loading")
                 }
                 is DataState.Error -> Toast.makeText(
-                    requireContext(),
-                    "Error! ${it.throwable.message}",
-                    Toast.LENGTH_SHORT
+                        requireContext(),
+                        "Error! ${it.throwable.message}",
+                        Toast.LENGTH_SHORT
                 )
-                    .show()
+                        .show()
                 is DataState.Progress -> binding.pb.progress = it.progress.toInt()
                 is DataState.Success -> {
                     Toast.makeText(requireContext(), "File uploaded successfully !", Toast.LENGTH_SHORT)
-                        .show()
+                            .show()
                     downloadUrl = it.data
                 }
             }
         }
-        binding.ibBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-        binding.ibUpdate.setOnClickListener {
-            update()
-        }
-        viewModel.issueUpdateState.observe(viewLifecycleOwner){
-            when(it){
-                is DataState.Loading -> {
-                    Log.d(TAG, "onViewCreated: loading")
-                }
-                is DataState.Error -> Toast.makeText(
-                    requireContext(),
-                    "Error! ${it.throwable.message}",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-                is DataState.Success -> {
-                    Toast.makeText(requireContext(), it.data, Toast.LENGTH_SHORT)
-                        .show()
-                    findNavController().navigate(R.id.action_teacherEditTitleFragment_to_teacherAddFragment)
-                }
-            }
-        }
     }
-    private fun update(){
-       if (selectedIssue != null){
-           viewModel.updateIssue(
-               selectedClass!!,
-               binding.etTitle.text.toString(),
-               binding.etDes.text.toString(),
-               deadline!!,
-               fileName,
-               downloadUrl
-           )
-       }else{
-           viewModel.createIssue(
-               selectedClass!!,
-               binding.etTitle.text.toString(),
-               binding.etDes.text.toString(),
-               deadline!!,
-               fileName!!,
-               downloadUrl!!
-           )
-       }
-    }
+
     private fun chooseFile(){
         files.launch("application/pdf")
     }

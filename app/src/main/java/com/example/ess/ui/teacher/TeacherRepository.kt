@@ -1,8 +1,7 @@
 package com.example.ess.ui.teacher
 
+import android.annotation.SuppressLint
 import android.net.Uri
-import android.provider.ContactsContract
-import android.service.autofill.Dataset
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.ess.model.*
@@ -26,7 +25,6 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 
 @Singleton
 class TeacherRepository
@@ -36,51 +34,65 @@ class TeacherRepository
     private var firebaseStorage: FirebaseStorage,
     private val firebaseMessaging: FirebaseMessaging
 ){
+    private val TAG = "Teacher Repository"
 
     suspend fun getComments(feedItem: FeedItem): Flow<DataState<List<Comment>>> = flow {
         emit(DataState.Loading)
         val list = mutableListOf<Comment>()
         try {
-            val snapshot = firebaseDatabase.getReference("Classes/Math").orderByChild("title").equalTo(feedItem.title).get().await()
-            Log.d("TAG", "getComments: $snapshot")
-            val comments = snapshot.child("randomkey").child("comments").getValue(Comments::class.java)
-            Log.d("TAG", "getComments: ${snapshot.child("randomkey").child("comments").value}")
-            Log.d("debug", "getComments: ${comments!!}")
-           /* comments?.comments?.forEach {
-                list.add(it.value)
-            }*/
-            if (list.isEmpty()){
-                    Log.d("debug", "getComments: empty")
-            }else{
-                emit(DataState.Success(list))
+            val snapshot = firebaseDatabase.getReference(feedItem.path)
+                    .child("comments").get().await()
+            snapshot.children.forEach{
+                it.getValue(Comment::class.java)?.let { comment ->
+                    comment.subCommentsCount = it.child("sub_comments").childrenCount.toString()
+                    list.add(comment)
+                }
             }
+            Log.d(TAG, "getComments: $snapshot")
 
-        }catch (cause:EssError){
+            emit(DataState.Success(list))
+        } catch (cause: EssError) {
             emit(DataState.Error(cause))
         }
     }
 
+    suspend fun getSubmits(feedItem: FeedItem): Flow<DataState<List<Submit>>> = flow {
+        emit(DataState.Loading)
+        val list = mutableListOf<Submit>()
+        try {
+            Log.d(TAG, "getSubmits: ${feedItem.path}")
+            val snapshot = firebaseDatabase.getReference(feedItem.path)
+                    .child("submits").get().await()
+            Log.d(TAG, "getSubmits: $snapshot")
+            snapshot.children.forEach{
+                it.getValue(Submit::class.java)?.let { submit ->
+                    list.add(submit)
+                }
+            }
+
+            emit(DataState.Success(list))
+        } catch (cause: EssError) {
+            emit(DataState.Error(cause))
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
     suspend fun getFeed(): Flow<DataState<List<FeedItem>>> = flow {
         emit(DataState.Loading)
         val feedList = mutableListOf<FeedItem>()
         try {
             val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}")
                     .child("Classes").get().await()
-            snapshot.children.forEach {
-               val currentClass = firebaseDatabase.getReference("Classes/${it.key}").get().await()
+            snapshot.children.forEach { it ->
+                val currentClass = firebaseDatabase.getReference("Classes/${it.key}").get().await()
                 currentClass.children.forEach { feed ->
-                    feedList.add(FeedItem(
-                            title = feed.child("title").value as String,
-                            description = feed.child("description").value as String?,
-                            downloadUrl = feed.child("download_url").value as String?,
-                            fileName = feed.child("file_name").value as String?,
-                            publishedBy = feed.child("published_by").value as String,
-                            publisherUid = feed.child("publisher_uid").value as String?,
-                            publisherImageUrl= feed.child("publisher_image_url").value as String?,
-                            deadline = feed.child("deadline").value as String,
-                            commentsCount = feed.child("comments").childrenCount.toString(),
-                            subscriptionsCount = feed.child("subscriptions").childrenCount.toString()
-                    ))
+                    val item = feed.getValue(FeedItem::class.java)
+                    item?.let { cItem ->
+                        cItem.path = feed.ref.path.toString()
+                        cItem.commentsCount = feed.child("comments").childrenCount.toString()
+                        cItem.submitsCount = feed.child("submits").childrenCount.toString()
+                    }
+                    item?.let { it1 -> feedList.add(it1) }
                 }
             }
             if (feedList.isNotEmpty()){
@@ -94,19 +106,28 @@ class TeacherRepository
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    suspend fun getIssueKey(selectedClass:String) = withContext(Dispatchers.IO){
+        val push = firebaseDatabase.getReference("Classes").child(selectedClass).push()
+        push.child("path").setValue(push.ref.path.toString()).await()
+        return@withContext push.key
+    }
+    @SuppressLint("RestrictedApi")
     suspend fun createIssue(className:String,title:String,description:String,
                             deadline:String,fileName: String?,downloadUrl:String?)
             : Flow<DataState<String>> = flow {
         emit(DataState.Loading)
         try {
             val cUser = firebaseAuth.currentUser
-            firebaseDatabase.getReference("Classes/$className").push()
+            val push = firebaseDatabase.getReference("Classes").child(className).push()
+            push.child("path").setValue(push.ref.path.toString()).await()
+            firebaseDatabase.getReference("Classes/$className").child(push.key!!)
                 .updateChildren(IssueShortMapper.modelToMap(
                     IssueShort(
                         title = title,
                         description = description,
                         deadline = deadline,
-                        published_by = cUser!!.displayName!!,
+                        publishedBy = cUser!!.displayName!!,
                         fileName = fileName,
                         downloadUrl = downloadUrl
                     )
@@ -134,7 +155,7 @@ class TeacherRepository
                         title = title,
                         description = description,
                         deadline = deadline,
-                        published_by = cUser!!.displayName!!,
+                        publishedBy = cUser!!.displayName!!,
                         fileName = fileName,
                         downloadUrl = downloadUrl
                     )

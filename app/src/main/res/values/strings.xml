@@ -30,8 +30,10 @@
     <string name="description">Description:</string>
     <string name="file">File Name:</string>
     <string name="deadline">Deadline:</string>
-    <string name="change">Change</string>
+    <string name="change_date">Change Date</string>
+    <string name="set_date">Set Date</string>
     <string name="create_issue">Create Issue</string>
+    <string name="edit_issue">Edit Issue</string>
 
     <!--teacher-->
     <string name="subscribe_to_channel">Subscribe to channel</string>

@@ -40,6 +40,10 @@ class TeacherAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.btnCreateIssue.setOnClickListener {
+                findNavController().navigate(R.id.action_teacherAddFragment_to_teacherCreateIssueFragment,
+                        bundleOf(Pair("selectedClass",selectedClass)))
+        }
         binding.btnShowSubmits.setOnClickListener {
             findNavController().navigate(R.id.action_teacherAddFragment_to_teacherSubmitsFragment,
                 bundleOf(Pair("selectedIssue",selectedIssue)))

@@ -1,4 +1,4 @@
-package com.example.ess.ui.teacher.home
+package com.example.ess.ui.common.home
 
 import android.os.Bundle
 import android.util.Log
@@ -11,24 +11,27 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ess.R
-import com.example.ess.databinding.FragmentTeacherHomeBinding
+import com.example.ess.databinding.FragmentHomeBinding
 import com.example.ess.model.FeedItem
-import com.example.ess.ui.teacher.TeacherViewModel
+import com.example.ess.ui.common.CommonViewModel
+import com.example.ess.ui.teacher.home.FeedAdapter
+import com.example.ess.ui.teacher.home.TeacherHomeFragmentDirections
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TeacherHomeFragment : Fragment(),
-    FeedAdapter.OnItemClickListener{
+class HomeFragment : Fragment(),
+FeedAdapter.OnItemClickListener{
 
-    private val TAG = "TeacherHomeFragment"
-    private val viewModel : TeacherViewModel by viewModels()
-    private var _binding : FragmentTeacherHomeBinding? = null
+
+    private val TAG = "HomeFragment"
+    private val viewModel : CommonViewModel by viewModels()
+    private var _binding : FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentTeacherHomeBinding.inflate(inflater,container,false)
+        _binding = FragmentHomeBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -59,7 +62,6 @@ class TeacherHomeFragment : Fragment(),
         }
     }
 
-
     override fun onViewClicked(feedItem: FeedItem) {
 
     }
@@ -78,5 +80,4 @@ class TeacherHomeFragment : Fragment(),
         val action = TeacherHomeFragmentDirections.actionTeacherHomeFragmentToShowProfileFragment(null,feedItem)
         findNavController().navigate(action)
     }
-
 }

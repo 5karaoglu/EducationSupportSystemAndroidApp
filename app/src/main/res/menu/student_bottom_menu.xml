@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/studentHomeFragment"
+    <item android:id="@+id/homeFragment2"
         android:title="@string/home"
         android:icon="@drawable/ic_outline_home_24"/>
-    <item android:id="@+id/studentSearchFragment"
+    <item android:id="@+id/searchFragment2"
         android:title="@string/search"
         android:icon="@drawable/ic_outline_search_24"/>
     <item android:id="@+id/studentAddFragment"

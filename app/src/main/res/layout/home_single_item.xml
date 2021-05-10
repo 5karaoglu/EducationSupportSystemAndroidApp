@@ -37,7 +37,6 @@
             android:layout_marginBottom="5dp"
             android:maxLines="1"
             android:text="Fulgencio Joseph Prichett"
-            app:layout_constraintBottom_toTopOf="@+id/tvChooseClass"
             app:layout_constraintStart_toEndOf="@+id/ivUser"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -127,7 +126,7 @@ She's thunderstorms"
 
 
     <TextView
-        android:id="@+id/tvSubscriptions"
+        android:id="@+id/tvSubmits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
@@ -144,7 +143,7 @@ She's thunderstorms"
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:background="@drawable/ic_baseline_comment_24"
-        app:layout_constraintStart_toEndOf="@+id/tvSubscriptions"
+        app:layout_constraintStart_toEndOf="@+id/tvSubmits"
         app:layout_constraintTop_toBottomOf="@+id/btnAttachedFile" />
 
     <TextView

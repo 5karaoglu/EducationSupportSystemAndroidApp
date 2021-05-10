@@ -1,5 +1,6 @@
 package com.example.ess.ui.common
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.example.ess.model.*
 import com.example.ess.util.DataState
@@ -26,6 +27,36 @@ class CommonRepository
     private val firebaseAuth: FirebaseAuth,
     private var firebaseDatabase: FirebaseDatabase
 ): RepoHelper{
+
+    @SuppressLint("RestrictedApi")
+    suspend fun getFeed(): Flow<DataState<List<FeedItem>>> = flow {
+        emit(DataState.Loading)
+        val feedList = mutableListOf<FeedItem>()
+        try {
+            val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}")
+                .child("Classes").get().await()
+            snapshot.children.forEach { it ->
+                val currentClass = firebaseDatabase.getReference("Classes/${it.key}").get().await()
+                currentClass.children.forEach { feed ->
+                    val item = feed.getValue(FeedItem::class.java)
+                    item?.let { cItem ->
+                        cItem.path = feed.ref.path.toString()
+                        cItem.commentsCount = feed.child("comments").childrenCount.toString()
+                        cItem.submitsCount = feed.child("submits").childrenCount.toString()
+                    }
+                    item?.let { it1 -> feedList.add(it1) }
+                }
+            }
+            if (feedList.isNotEmpty()){
+                emit(DataState.Success(feedList))
+
+            }else{
+                Log.d("debug", "getFeed:Listempty")
+            }
+        }catch (cause: EssError){
+            emit(DataState.Error(cause))
+        }
+    }
 
     suspend fun getUser(uid:String): Flow<DataState<User>> = flow {
         emit(DataState.Loading)

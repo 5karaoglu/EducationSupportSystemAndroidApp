@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ess.model.Contact
-import com.example.ess.model.Message
-import com.example.ess.model.User
-import com.example.ess.model.UserShort
+import com.example.ess.model.*
 import com.example.ess.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +39,10 @@ class CommonViewModel
     private var _contact: MutableLiveData<Contact> = MutableLiveData()
     val contact : LiveData<Contact>
         get() = _contact
+
+    private val _feedState : MutableLiveData<DataState<List<FeedItem>>> = MutableLiveData()
+    val feedState : LiveData<DataState<List<FeedItem>>>
+        get() = _feedState
 
 
     fun getUsers(query:String) = viewModelScope.launch {
@@ -86,6 +87,13 @@ class CommonViewModel
     /*fun updateLastMessage(contact: Contact,lastMessage:Message) = viewModelScope.launch {
             repository.updateLastMessage(contact,lastMessage)
     }*/
+
+    fun getFeed() = viewModelScope.launch {
+        repository.getFeed()
+            .collect{
+                _feedState.value = it
+            }
+    }
 
 
 }

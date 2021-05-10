@@ -2,31 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/teacher_nav_graph"
-    app:startDestination="@id/teacherHomeFragment">
+    android:id="@+id/teacher_nav_graph">
 
-    <fragment
-        android:id="@+id/teacherHomeFragment"
-        android:name="com.example.ess.ui.teacher.home.TeacherHomeFragment"
-        android:label="fragment_teacher_home"
-        tools:layout="@layout/fragment_teacher_home" >
-        <action
-            android:id="@+id/action_teacherHomeFragment_to_messagesFragment"
-            app:destination="@id/messagesFragment" />
-        <action
-            android:id="@+id/action_teacherHomeFragment_to_commentsFragment"
-            app:destination="@id/commentsFragment" />
-        <action
-            android:id="@+id/action_teacherHomeFragment_to_submitsFragment"
-            app:destination="@id/submitsFragment" />
-        <action
-            android:id="@+id/action_teacherHomeFragment_to_showProfileFragment"
-            app:destination="@id/showProfileFragment" />
-        <argument
-            android:name="feedItem"
-            app:argType="com.example.ess.model.FeedItem"
-            app:nullable="true" />
-    </fragment>
     <fragment
         android:id="@+id/teacherAddFragment"
         android:name="com.example.ess.ui.teacher.add.TeacherAddFragment"
@@ -38,6 +15,9 @@
         <action
             android:id="@+id/action_teacherAddFragment_to_teacherSubmitsFragment"
             app:destination="@id/teacherSubmitsFragment" />
+        <action
+            android:id="@+id/action_teacherAddFragment_to_teacherCreateIssueFragment"
+            app:destination="@id/teacherCreateIssueFragment" />
     </fragment>
     <fragment
         android:id="@+id/teacherNotificationFragment"
@@ -153,6 +133,37 @@
         android:name="com.example.ess.ui.teacher.home.SubmitsFragment"
         android:label="fragment_submits"
         tools:layout="@layout/fragment_submits" >
+        <argument
+            android:name="feedItem"
+            app:argType="com.example.ess.model.FeedItem"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/teacherCreateIssueFragment"
+        android:name="com.example.ess.ui.teacher.add.TeacherCreateIssueFragment"
+        android:label="fragment_teacher_create_issue"
+        tools:layout="@layout/fragment_teacher_create_issue" >
+        <action
+            android:id="@+id/action_teacherCreateIssueFragment_to_teacherAddFragment"
+            app:destination="@id/teacherAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.ess.ui.common.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_teacherHomeFragment_to_messagesFragment"
+            app:destination="@id/messagesFragment" />
+        <action
+            android:id="@+id/action_teacherHomeFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_teacherHomeFragment_to_submitsFragment"
+            app:destination="@id/submitsFragment" />
+        <action
+            android:id="@+id/action_teacherHomeFragment_to_showProfileFragment"
+            app:destination="@id/showProfileFragment" />
         <argument
             android:name="feedItem"
             app:argType="com.example.ess.model.FeedItem"

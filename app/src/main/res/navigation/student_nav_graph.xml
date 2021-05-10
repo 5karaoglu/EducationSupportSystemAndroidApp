@@ -3,17 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/student_nav_graph"
-    app:startDestination="@id/studentHomeFragment">
+    app:startDestination="@id/homeFragment2">
 
-    <fragment
-        android:id="@+id/studentHomeFragment"
-        android:name="com.example.ess.ui.student.home.StudentHomeFragment"
-        android:label="StudentHomeFragment" />
-    <fragment
-        android:id="@+id/studentSearchFragment"
-        android:name="com.example.ess.ui.student.search.StudentSearchFragment"
-        android:label="fragment_student_search"
-        tools:layout="@layout/fragment_student_search" />
     <fragment
         android:id="@+id/studentNotificationsFragment"
         android:name="com.example.ess.ui.student.notifications.StudentNotificationsFragment"
@@ -38,4 +29,92 @@
         android:name="com.example.ess.ui.student.notifications.StudentAddChannel"
         android:label="fragment_student_add_channel"
         tools:layout="@layout/fragment_student_add_channel" />
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.example.ess.ui.common.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment2_to_messagesFragment2"
+            app:destination="@id/messagesFragment2" />
+        <action
+            android:id="@+id/action_homeFragment2_to_showProfileFragment2"
+            app:destination="@id/showProfileFragment2" />
+        <action
+            android:id="@+id/action_homeFragment2_to_submitsFragment2"
+            app:destination="@id/submitsFragment2" />
+        <action
+            android:id="@+id/action_homeFragment2_to_commentsFragment2"
+            app:destination="@id/commentsFragment2" />
+        <argument
+            android:name="feedItem"
+            app:argType="com.example.ess.model.FeedItem"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/messagesFragment2"
+        android:name="com.example.ess.ui.common.messages.MessagesFragment"
+        android:label="fragment_messages"
+        tools:layout="@layout/fragment_messages" >
+        <action
+            android:id="@+id/action_messagesFragment2_to_chatFragment2"
+            app:destination="@id/chatFragment2" />
+        <argument
+            app:argType="com.example.ess.model.Contact"
+            android:name="contact"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment2"
+        android:name="com.example.ess.ui.common.messages.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            app:argType="com.example.ess.model.Contact"
+            android:name="contact"/>
+    </fragment>
+    <fragment
+        android:id="@+id/showProfileFragment2"
+        android:name="com.example.ess.ui.common.showprofile.ShowProfileFragment"
+        android:label="fragment_show_profile"
+        tools:layout="@layout/fragment_show_profile" >
+        <argument
+            android:name="feedItem"
+            app:argType="com.example.ess.model.FeedItem"
+            app:nullable="true" />
+        <argument
+            android:name="userShort"
+            app:argType="com.example.ess.model.UserShort" />
+    </fragment>
+    <fragment
+        android:id="@+id/submitsFragment2"
+        android:name="com.example.ess.ui.teacher.home.SubmitsFragment"
+        android:label="fragment_submits"
+        tools:layout="@layout/fragment_submits" >
+        <argument
+            android:name="feedItem"
+            app:argType="com.example.ess.model.FeedItem"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment2"
+        android:name="com.example.ess.ui.teacher.home.CommentsFragment"
+        android:label="fragment_comments"
+        tools:layout="@layout/fragment_comments" >
+        <argument
+            android:name="feedItem"
+            app:argType="com.example.ess.model.FeedItem"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment2"
+        android:name="com.example.ess.ui.common.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment2_to_showProfileFragment2"
+            app:destination="@id/showProfileFragment2" />
+        <argument
+            android:name="userShort"
+            app:argType="com.example.ess.model.UserShort" />
+    </fragment>
 </navigation>
