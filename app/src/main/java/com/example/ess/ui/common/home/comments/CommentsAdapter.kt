@@ -1,18 +1,17 @@
-package com.example.ess.ui.teacher.home
+package com.example.ess.ui.common.home.comments
 
-import android.content.Context
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.bold
+import androidx.core.text.italic
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ess.R
 import com.example.ess.databinding.CommentsSingleItemBinding
-import com.example.ess.databinding.HomeSingleItemBinding
-import com.example.ess.databinding.SubcommentSingleItemBinding
 import com.example.ess.model.Comment
+import com.example.ess.util.Functions
 import com.squareup.picasso.Picasso
 
 class CommentsAdapter (
@@ -23,9 +22,12 @@ class CommentsAdapter (
     class CommentsViewHolder(private val binding: CommentsSingleItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(comment: Comment, listener: OnItemClickListener){
             Log.d("debug", "bind: binded")
-            binding.tvName.text = comment.name
-            binding.tvComment.text = comment.comment
-            binding.tvSeeReplies.text = "See all ${comment.subCommentsCount} comments"
+            binding.tvText.text = SpannableStringBuilder()
+                    .bold { append(comment.name) }
+                    .append("  ")
+                    .append(comment.comment)
+            binding.tvTime.text = Functions.tsToDate(comment.timestamp)
+            /*binding.tvSeeReplies.text = "See all ${comment.subCommentsCount} comments"*/
 
             if (comment.imageUrl.isNotEmpty()){
                 Picasso.get()
@@ -33,9 +35,9 @@ class CommentsAdapter (
                         .fit().centerInside()
                         .into(binding.iv)
             }
-            binding.tvSeeReplies.setOnClickListener {
+            /*binding.tvSeeReplies.setOnClickListener {
                 listener.onTvClicked(comment)
-            }
+            }*/
 
         }
     }
@@ -44,7 +46,8 @@ class CommentsAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentsViewHolder {
         return CommentsViewHolder( CommentsSingleItemBinding.inflate(LayoutInflater.from(parent.context),
-                parent,false))}
+                parent,false))
+    }
 
 
 

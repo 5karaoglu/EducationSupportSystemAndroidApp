@@ -1,4 +1,4 @@
-package com.example.ess.ui.teacher.profile
+package com.example.ess.ui.common.editProfile
 
 import android.net.Uri
 import android.os.Bundle
@@ -12,8 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.ess.R
-import com.example.ess.databinding.FragmentTeacherEditProfileBinding
+import com.example.ess.databinding.FragmentEditProfileBinding
 import com.example.ess.model.User
 import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
@@ -22,10 +21,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
-class TeacherEditProfileFragment : Fragment() {
+class EditProfileFragment : Fragment() {
 
     private val TAG = "TeacherEditProfileFragment"
-    private var _binding : FragmentTeacherEditProfileBinding? = null
+    private var _binding : FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TeacherViewModel by viewModels()
     private var uri: Uri? = null
@@ -42,7 +41,7 @@ class TeacherEditProfileFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentTeacherEditProfileBinding.inflate(inflater,container,false)
+        _binding = FragmentEditProfileBinding.inflate(inflater,container,false)
         return binding.root
     }
     override fun onDestroyView() {
@@ -52,6 +51,7 @@ class TeacherEditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getUserInfo()
         binding.ibBack.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -72,7 +72,7 @@ class TeacherEditProfileFragment : Fragment() {
                 }
                 is DataState.Success -> {
                     Toast.makeText(requireContext(), it.data, Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_teacherEditProfileFragment_to_teacherProfileFragment)
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -82,7 +82,7 @@ class TeacherEditProfileFragment : Fragment() {
                 val user = User(
                     name = binding.etName.text.toString(),
                     email = binding.etUsername.text.toString(),
-                    imageURL = uri.toString()
+                    imageUrl = uri.toString()
                 )
                 viewModel.updateUser(user)
             }else{
@@ -94,17 +94,20 @@ class TeacherEditProfileFragment : Fragment() {
             }
 
         }
+
+
+    }
+    private fun getUserInfo(){
         viewModel.currentUser.observe(viewLifecycleOwner){
-            Log.d(TAG, "onViewCreated: ${it.imageURL}")
+            Log.d(TAG, "onViewCreated: ${it.imageUrl}")
             user = it
             Picasso.get()
-                    .load(it.imageURL)
+                    .load(it.imageUrl)
                     .fit().centerInside()
                     .into(binding.ivPp)
             binding.etName.setText(it.name)
             binding.etUsername.setText(it.email)
         }
         viewModel.getUserInfo()
-
     }
 }

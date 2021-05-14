@@ -1,5 +1,6 @@
-package com.example.ess.ui.teacher.home
+package com.example.ess.ui.common.home.submits
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,21 +12,24 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.ess.EssApplication
 import com.example.ess.R
 import com.example.ess.databinding.FragmentSubmitsBinding
 import com.example.ess.model.Submit
+import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
 
     private var _binding: FragmentSubmitsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TeacherViewModel by viewModels()
+    private val viewModel: CommonViewModel by viewModels()
     private val args: SubmitsFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -34,14 +38,20 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSubmitsBinding.inflate(inflater,container,false)
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.GONE
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.VISIBLE
         _binding = null
     }
@@ -57,7 +67,7 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
         binding.ibBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        args.feedItem?.let { viewModel.getSubmits(it) }
+        args.feedItem?.let { viewModel.getSubmissions(it) }
         viewModel.submitsState.observe(viewLifecycleOwner){
             when(it){
                 is DataState.Loading -> {}
@@ -67,9 +77,25 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
                 }
             }
         }
+        viewModel.downloadState.observe(viewLifecycleOwner){
+            when(it){
+                is DataState.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
+                is DataState.Error -> Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
+                is DataState.Progress -> binding.pb.progress = it.progress.toInt()
+                is DataState.Success -> {
+                    binding.pb.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.data, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
-    override fun onViewClicked(feedItem: Submit) {
-        TODO("Not yet implemented")
+    @ExperimentalCoroutinesApi
+    override fun onViewClicked(submit: Submit) {
+        if ((requireActivity().application as EssApplication).userType == "Teacher" ){
+            viewModel.downloadFile(submit)
+        }
     }
 }

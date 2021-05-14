@@ -52,8 +52,8 @@ class TeacherViewModel
     val issueList : LiveData<List<String>>
         get() = _issueList
 
-    private val _issue : MutableLiveData<IssueShort> = MutableLiveData()
-    val issue : LiveData<IssueShort>
+    private val _issue : MutableLiveData<FeedItem> = MutableLiveData()
+    val issue : LiveData<FeedItem>
         get() = _issue
 
     private val _issueKey : MutableLiveData<String> = MutableLiveData()
@@ -72,9 +72,6 @@ class TeacherViewModel
     val feedState : LiveData<DataState<List<FeedItem>>>
         get() = _feedState
 
-    private val _commentsState : MutableLiveData<DataState<List<Comment>>> = MutableLiveData()
-    val commentsState : LiveData<DataState<List<Comment>>>
-        get() = _commentsState
 
     private val _submitsState : MutableLiveData<DataState<List<Submit>>> = MutableLiveData()
     val submitsState : LiveData<DataState<List<Submit>>>
@@ -160,12 +157,7 @@ class TeacherViewModel
                     _feedState.value = it
                 }
     }
-    fun getComments(feedItem: FeedItem) = viewModelScope.launch {
-        repository.getComments(feedItem)
-                .collect{
-                    _commentsState.value = it
-                }
-    }
+
     fun getSubmits(feedItem: FeedItem) = viewModelScope.launch {
         repository.getSubmits(feedItem)
                 .collect{

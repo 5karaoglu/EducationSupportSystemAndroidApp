@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.teacher.home.SubmitsFragment">
+    tools:context=".ui.common.home.submits.SubmitsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -47,11 +47,27 @@
         tools:listitem="@layout/submits_single_item"
         android:layout_below="@id/appBarLayout" />
 
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/pb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_centerInParent="true"
+        android:indeterminate="false"
+        android:progress="0"
+        android:max="100"
+        android:orientation="horizontal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressBackgroundTint="@color/black"
+        />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:layout_alignParentBottom="true">
+       android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/buttonSubmit"

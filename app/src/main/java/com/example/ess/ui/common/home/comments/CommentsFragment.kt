@@ -1,4 +1,4 @@
-package com.example.ess.ui.teacher.home
+package com.example.ess.ui.common.home.comments
 
 import android.os.Bundle
 import android.util.Log
@@ -13,22 +13,23 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ess.R
 import com.example.ess.databinding.FragmentCommentsBinding
-import com.example.ess.databinding.FragmentSubmitsBinding
 import com.example.ess.model.Comment
+import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class CommentsFragment : Fragment(),
-CommentsAdapter.OnItemClickListener{
+    CommentsAdapter.OnItemClickListener {
 
     private val TAG = "CommentsFragment"
     private var _binding: FragmentCommentsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TeacherViewModel by viewModels()
+    private val viewModel: CommonViewModel by viewModels()
     private val args: CommentsFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -37,18 +38,25 @@ CommentsAdapter.OnItemClickListener{
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommentsBinding.inflate(inflater,container,false)
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.GONE
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.GONE
         _binding = null
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CommentsAdapter(this)
@@ -57,6 +65,12 @@ CommentsAdapter.OnItemClickListener{
         binding.recycler.addItemDecoration(NotificationItemDecoration())
         binding.ibBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+        binding.buttonComment.setOnClickListener {
+            if (binding.etAddComment.text.isNotEmpty()){
+                viewModel.addComment(args.feedItem!!,binding.etAddComment.text.toString())
+                binding.etAddComment.text.clear()
+            }
         }
         viewModel.getComments(args.feedItem!!)
         viewModel.commentsState.observe(viewLifecycleOwner){
@@ -68,7 +82,6 @@ CommentsAdapter.OnItemClickListener{
                     Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                 }
                 is DataState.Success -> {
-                    Log.d(TAG, "onViewCreated: wow success!! ${it.data[0].comment}")
                     adapter.submitList(it.data)
                 }
             }
@@ -78,6 +91,5 @@ CommentsAdapter.OnItemClickListener{
 
 
     override fun onTvClicked(comment: Comment) {
-        TODO("Not yet implemented")
     }
 }

@@ -5,4 +5,6 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class EssApplication: Application() {
+    var userType : String? = null
+
 }

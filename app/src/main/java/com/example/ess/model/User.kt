@@ -1,24 +1,27 @@
 package com.example.ess.model
 
 import android.os.Parcelable
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.IgnoreExtraProperties
+import com.google.firebase.database.PropertyName
 import kotlinx.android.parcel.Parcelize
 
 @IgnoreExtraProperties
+@Parcelize
 data class User(
         val uid: String? = null,
         val name: String? = null,
         val email: String? = null,
-        val imageURL: String? = null
-)
+        @get:PropertyName("image_url")
+        @set:PropertyName("image_url")
+        var imageUrl: String = "",
+):Parcelable
 class UserMapper{
     companion object{
         fun modelToMap(user: User): Map<String, String?> {
             return mapOf(
                     "name" to user.name,
                     "email" to user.email,
-                    "image_url" to user.imageURL
+                    "image_url" to user.imageUrl
             )
         }
 
@@ -27,15 +30,15 @@ class UserMapper{
                     uid = map["uid"] as String,
                     name = map["name"] as String,
                     email = map["email"] as String,
-                    imageURL = map["image_url"] as String
+                    imageUrl = map["image_url"] as String
             )
         }
-        fun dbToUser(firebaseUser: FirebaseUser):User{
+        fun dbToUser(firebaseUser: User):User{
             return User(
                     uid = firebaseUser.uid,
-                    name = firebaseUser.displayName,
+                    name = firebaseUser.name,
                     email = firebaseUser.email,
-                    imageURL = firebaseUser.photoUrl.toString()
+                    imageUrl = firebaseUser.imageUrl.toString()
             )
         }
     }
@@ -43,9 +46,11 @@ class UserMapper{
 @IgnoreExtraProperties
 @Parcelize
 data class UserShort (
-       val name: String,
-       val imageURL: String,
-       val uid: String
+       val name: String = "",
+       @get:PropertyName("image_url")
+       @set:PropertyName("image_url")
+       var imageURL: String = "",
+       val uid: String = ""
         ):Parcelable
 class UserShortMapper{
     companion object{

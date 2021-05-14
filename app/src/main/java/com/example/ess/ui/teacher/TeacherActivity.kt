@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.ess.EssApplication
 import com.example.ess.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
@@ -23,7 +24,7 @@ class TeacherActivity : AppCompatActivity() {
         setContentView(R.layout.activity_teacher)
 
         bottomNavInit()
-
+        (application as EssApplication).userType = "Teacher"
     }
 
     private fun bottomNavInit(){

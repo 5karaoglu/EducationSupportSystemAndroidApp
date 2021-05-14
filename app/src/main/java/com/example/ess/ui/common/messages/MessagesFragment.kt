@@ -31,7 +31,10 @@ class MessagesFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMessagesBinding.inflate(inflater,container,false)
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.GONE
         return binding.root
     }
@@ -48,7 +51,10 @@ class MessagesFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         binding.recyclerMessages.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerMessages.addItemDecoration(NotificationItemDecoration())
         binding.btnBack.setOnClickListener {
-            val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+            var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+            if (bottomBar == null){
+                bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+            }
             bottomBar.visibility = View.VISIBLE
             findNavController().popBackStack()
         }

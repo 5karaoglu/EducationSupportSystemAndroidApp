@@ -7,5 +7,6 @@ sealed class DataState<out R>{
     data class Error(val throwable: Throwable):DataState<Nothing>()
     data class Progress<out T>(val progress:T): DataState<T>()
     object Loading: DataState<Nothing>()
+    object Empty:DataState<Nothing>()
 
 }

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.ess.R
 import com.example.ess.databinding.FragmentSearchBinding
 import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel

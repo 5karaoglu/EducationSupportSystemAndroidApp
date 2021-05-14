@@ -12,6 +12,9 @@ import java.sql.Timestamp
 @Parcelize
 data class FeedItem(
         var path: String = "",
+        @get:PropertyName("class_name")
+        @set:PropertyName("class_name")
+        var className:String = "",
         val title: String = "",
         val description: String = "",
         @get:PropertyName("download_url")
@@ -34,14 +37,6 @@ data class FeedItem(
         var submitsCount: String = ""
 ):Parcelable
 
-data class Submit(
-        var path: String = "",
-        var filePath:String = "",
-        var imageUrl:String = "",
-        var name:String = "",
-        var uid:String = "",
-        var timestamp: String = ""
-)
 /*
 class FeedMapper{
     companion object{

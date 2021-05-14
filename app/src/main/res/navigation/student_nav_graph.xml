@@ -18,7 +18,11 @@
         android:id="@+id/studentProfileFragment"
         android:name="com.example.ess.ui.student.profile.StudentProfileFragment"
         android:label="fragment_student_profile"
-        tools:layout="@layout/fragment_student_profile" />
+        tools:layout="@layout/fragment_student_profile" >
+        <action
+            android:id="@+id/action_studentProfileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/studentAddFragment"
         android:name="com.example.ess.ui.student.add.StudentAddFragment"
@@ -35,16 +39,16 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment2_to_messagesFragment2"
+            android:id="@+id/action_homeFragment_to_messagesFragment"
             app:destination="@id/messagesFragment2" />
         <action
-            android:id="@+id/action_homeFragment2_to_showProfileFragment2"
+            android:id="@+id/action_homeFragment_to_showProfileFragment"
             app:destination="@id/showProfileFragment2" />
         <action
-            android:id="@+id/action_homeFragment2_to_submitsFragment2"
+            android:id="@+id/action_homeFragment_to_submitsFragment"
             app:destination="@id/submitsFragment2" />
         <action
-            android:id="@+id/action_homeFragment2_to_commentsFragment2"
+            android:id="@+id/action_homeFragment_to_commentsFragment"
             app:destination="@id/commentsFragment2" />
         <argument
             android:name="feedItem"
@@ -57,7 +61,7 @@
         android:label="fragment_messages"
         tools:layout="@layout/fragment_messages" >
         <action
-            android:id="@+id/action_messagesFragment2_to_chatFragment2"
+            android:id="@+id/action_messagesFragment_to_chatFragment"
             app:destination="@id/chatFragment2" />
         <argument
             app:argType="com.example.ess.model.Contact"
@@ -84,10 +88,13 @@
         <argument
             android:name="userShort"
             app:argType="com.example.ess.model.UserShort" />
+        <action
+            android:id="@+id/action_showProfileFragment_to_chatFragment"
+            app:destination="@id/chatFragment2" />
     </fragment>
     <fragment
         android:id="@+id/submitsFragment2"
-        android:name="com.example.ess.ui.teacher.home.SubmitsFragment"
+        android:name="com.example.ess.ui.common.home.submits.SubmitsFragment"
         android:label="fragment_submits"
         tools:layout="@layout/fragment_submits" >
         <argument
@@ -97,7 +104,7 @@
     </fragment>
     <fragment
         android:id="@+id/commentsFragment2"
-        android:name="com.example.ess.ui.teacher.home.CommentsFragment"
+        android:name="com.example.ess.ui.common.home.comments.CommentsFragment"
         android:label="fragment_comments"
         tools:layout="@layout/fragment_comments" >
         <argument
@@ -110,11 +117,23 @@
         android:name="com.example.ess.ui.common.search.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
-        <action
-            android:id="@+id/action_searchFragment2_to_showProfileFragment2"
-            app:destination="@id/showProfileFragment2" />
         <argument
             android:name="userShort"
             app:argType="com.example.ess.model.UserShort" />
+        <action
+            android:id="@+id/action_searchFragment_to_showProfileFragment"
+            app:destination="@id/showProfileFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.ess.ui.common.editProfile.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfileFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
+        <argument
+            android:name="user"
+            app:argType="com.example.ess.model.UserProfile" />
     </fragment>
 </navigation>

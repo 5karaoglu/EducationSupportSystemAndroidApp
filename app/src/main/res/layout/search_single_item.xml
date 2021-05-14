@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="60dp"
+    android:background="@drawable/border1">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/ivUser"
@@ -19,13 +21,27 @@
         android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:ellipsize="end"
-        android:text="Fulgencio Joseph"
-        android:padding="5dp"
-        android:layout_margin="10dp"
         android:maxLines="1"
-        app:layout_constraintBottom_toBottomOf="@+id/ivUser"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:text="Fulgencio Joseph"
         app:layout_constraintStart_toEndOf="@+id/ivUser"
         app:layout_constraintTop_toTopOf="@+id/ivUser" />
+
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="2dp"
+        android:textSize="12sp"
+        android:text="fulgencio@mf.com"
+        app:layout_constraintBottom_toBottomOf="@+id/ivUser"
+        app:layout_constraintStart_toEndOf="@+id/ivUser"
+        app:layout_constraintTop_toBottomOf="@+id/tvUsername" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

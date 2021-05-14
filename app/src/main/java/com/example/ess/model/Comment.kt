@@ -16,10 +16,10 @@ data class Comment(
         val name: String = "",
         val uid: String = "",
         val timestamp: String = "",
-        @get:PropertyName("comment_answers")
+        /*@get:PropertyName("comment_answers")
         @set:PropertyName("comment_answers")
         var subComments:HashMap<String,SubComments> = hashMapOf(),
-        var subCommentsCount: String = ""
+        var subCommentsCount: String = ""*/
 )
 data class SubComments(
         val comment: String = "",

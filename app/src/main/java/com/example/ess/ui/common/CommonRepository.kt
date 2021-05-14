@@ -6,8 +6,13 @@ import com.example.ess.model.*
 import com.example.ess.util.DataState
 import com.example.ess.util.EssError
 import com.example.ess.util.Functions
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FileDownloadTask
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.OnProgressListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -17,16 +22,94 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.sql.Timestamp
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.HashMap
 
 @Singleton
 class CommonRepository
 @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private var firebaseDatabase: FirebaseDatabase
+    private var firebaseDatabase: FirebaseDatabase,
+    private val firebaseStorage: FirebaseStorage
 ): RepoHelper{
+
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getSubmissions(feedItem: FeedItem): Flow<DataState<List<Submit>>> = callbackFlow {
+        val list = mutableListOf<Submit>()
+        val snapshot = firebaseDatabase.getReference(feedItem.path)
+                .child("submits")
+        offer(DataState.Loading)
+        val listener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                snapshot.getValue(Submit::class.java)?.let { list.add(it) }
+                this@callbackFlow.offer(DataState.Success(list))
+            }
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.offer(DataState.Error(Throwable(error.message)))
+            }
+        }
+        snapshot.addChildEventListener(listener)
+        awaitClose{snapshot.removeEventListener(listener)}
+
+    }
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getNotifications(): Flow<DataState<List<Notification>>> = callbackFlow {
+        val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
+        val cUser = ss.getValue(User::class.java)
+        val classList = mutableListOf<String>()
+        val list = mutableListOf<Notification>()
+        val listener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                snapshot.getValue(Notification::class.java)?.let { list.add(it) }
+                this@callbackFlow.offer(DataState.Success(list))
+            }
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.offer(DataState.Error(Throwable(error.message)))
+            }
+        }
+        val snapshot = firebaseDatabase.getReference("Users/${cUser!!.uid}/Classes").get().await()
+        snapshot.children.forEach {
+            firebaseDatabase.getReference("Notifications/${it.key}").addChildEventListener(listener)
+        }
+
+        awaitClose{
+            snapshot.children.forEach {
+                firebaseDatabase.getReference("Notifications/${it.key}").removeEventListener(listener)
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun downloadFile(submit: Submit) = callbackFlow<DataState<String>> {
+        offer(DataState.Loading)
+        val progressListener = OnProgressListener<FileDownloadTask.TaskSnapshot> {
+            this.offer(DataState.Progress(((100*it.bytesTransferred)/it.totalByteCount).toString()))
+        }
+        val successListener = OnSuccessListener<FileDownloadTask.TaskSnapshot>{
+            this.offer(DataState.Success("File downloaded successfully!"))
+        }
+        val errorListener = OnFailureListener{
+            this.offer(DataState.Error(it))
+        }
+        val local = File.createTempFile(submit.name,".pdf")
+        val ref = firebaseStorage.getReferenceFromUrl(submit.downloadUrl).getFile(local)
+       ref.addOnProgressListener(progressListener).addOnSuccessListener(successListener)
+               .addOnFailureListener(errorListener)
+        awaitClose { ref.removeOnProgressListener(progressListener).removeOnSuccessListener(successListener)
+                .removeOnFailureListener(errorListener)}
+    }
 
     @SuppressLint("RestrictedApi")
     suspend fun getFeed(): Flow<DataState<List<FeedItem>>> = flow {
@@ -139,7 +222,7 @@ class CommonRepository
         emit(DataState.Loading)
         try {
             val list = mutableListOf<UserShort>()
-            val users = firebaseDatabase.getReference("Users").orderByChild("name").startAt(query).get().await()
+            val users = firebaseDatabase.getReference("Users").orderByChild("email").startAt(query).get().await()
             users.children.forEach {
                 list.add(UserShortMapper.mapToModel(it.value as HashMap<String, *>))
             }
@@ -196,7 +279,7 @@ class CommonRepository
                     ContactMapper.modelToMap(
                             Contact(
                                     chatId = chatID.key!!,
-                                    imageUrl = user!!.imageURL!!,
+                                    imageUrl = user!!.imageUrl!!,
                                     lastMessage = "",
                                     myUid = firebaseAuth.currentUser!!.uid,
                                     name = user!!.name!!,
@@ -217,7 +300,7 @@ class CommonRepository
                             )
                     )
             )
-            contact = Contact(chatId = chatID.key!!, imageUrl = user!!.imageURL!!,
+            contact = Contact(chatId = chatID.key!!, imageUrl = user!!.imageUrl!!,
                     lastMessage = "", myUid = firebaseAuth.currentUser!!.uid,
                     name = user!!.name!!, receiverUid = user!!.uid!!)
             return@withContext contact
@@ -238,7 +321,48 @@ class CommonRepository
         ).await()
     }
 
+    @ExperimentalCoroutinesApi
+    override suspend fun getComments(feedItem: FeedItem): Flow<DataState<List<Comment>>> = callbackFlow {
+        offer(DataState.Loading)
+        val list = mutableListOf<Comment>()
+        val snapshot = firebaseDatabase.getReference(feedItem.path).child("comments")
+        val listener = object: ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                snapshot.getValue(Comment::class.java)?.let { list.add(it) }
+                list.reverse()
+                this@callbackFlow.offer(DataState.Success(list))
+            }
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {
+               this@callbackFlow.offer(DataState.Error(Throwable(error.message)))
+            }
+        }
+
+        snapshot.addChildEventListener(listener)
+        awaitClose { snapshot.removeEventListener(listener) }
+
+    }
+
+    @SuppressLint("RestrictedApi")
+    suspend fun addComment(feedItem: FeedItem, comment:String) = withContext(Dispatchers.IO){
+        val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
+        val user = ss.getValue(UserProfile::class.java)
+        val ss2 = firebaseDatabase.getReference(feedItem.path).child("comments").push()
+        val commentItem = Comment(ss2.ref.path.wireFormat(),comment,
+                user!!.imageUrl,user.name,user.uid,Functions.getCurrentDate().toString())
+        ss2.setValue(commentItem).await()
+        //adding activity
+        val activityItem = ActivityItem(feedItem.className,feedItem.title,comment,Functions.getCurrentDate().toString(),"comment")
+        firebaseDatabase.getReference("Users/${user.uid}").child("activities").push().setValue(activityItem)
+    }
+
 }
 interface RepoHelper{
     fun getMessages(chatID: String): Flow<DataState<List<Message>>>
+    fun downloadFile(submit: Submit): Flow<DataState<String>>
+    suspend fun getComments(feedItem: FeedItem): Flow<DataState<List<Comment>>>
+    suspend fun getSubmissions(feedItem: FeedItem): Flow<DataState<List<Submit>>>
+    suspend fun getNotifications(): Flow<DataState<List<Notification>>>
 }

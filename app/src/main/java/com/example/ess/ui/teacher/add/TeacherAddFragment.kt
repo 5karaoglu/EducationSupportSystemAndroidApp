@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
 import com.example.ess.databinding.FragmentTeacherAddBinding
-import com.example.ess.databinding.FragmentTeacherHomeBinding
 import com.example.ess.model.IssueShort
 import com.example.ess.ui.teacher.TeacherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,12 +44,18 @@ class TeacherAddFragment : Fragment() {
                         bundleOf(Pair("selectedClass",selectedClass)))
         }
         binding.btnShowSubmits.setOnClickListener {
-            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherSubmitsFragment,
-                bundleOf(Pair("selectedIssue",selectedIssue)))
+            viewModel.getIssue(selectedClass!!,selectedIssue!!)
+            viewModel.issue.observe(viewLifecycleOwner){
+                val action = TeacherAddFragmentDirections.actionTeacherAddFragmentToSubmitsFragment(it)
+                findNavController().navigate(action)
+            }
         }
         binding.btnShowComments.setOnClickListener {
-            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherSubmitsFragment,
-                bundleOf(Pair("selectedIssue",selectedIssue)))
+            viewModel.getIssue(selectedClass!!,selectedIssue!!)
+            viewModel.issue.observe(viewLifecycleOwner){
+                val action = TeacherAddFragmentDirections.actionTeacherAddFragmentToCommentsFragment(it)
+                findNavController().navigate(action)
+            }
         }
         binding.btnEditIssue.setOnClickListener {
             findNavController().navigate(R.id.action_teacherAddFragment_to_teacherEditTitleFragment,

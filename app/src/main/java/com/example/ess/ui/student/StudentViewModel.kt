@@ -1,13 +1,15 @@
 package com.example.ess.ui.student
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ess.EssRepository
-import com.example.ess.model.Notification
+import com.example.ess.model.*
 import com.example.ess.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -32,6 +34,54 @@ class StudentViewModel
     val loadState : LiveData<DataState<List<String>>>
         get() = _loadState
 
+    private val _classList : MutableLiveData<List<String>> = MutableLiveData()
+    val classList : LiveData<List<String>>
+        get() = _classList
+
+    private val _issueList : MutableLiveData<List<String>> = MutableLiveData()
+    val issueList : LiveData<List<String>>
+        get() = _issueList
+
+    private val _submissionState : MutableLiveData<DataState<Submit?>> = MutableLiveData()
+    val submissionState : LiveData<DataState<Submit?>>
+        get() = _submissionState
+
+    private val _submittingState : MutableLiveData<DataState<String>> = MutableLiveData()
+    val submittingState : LiveData<DataState<String>>
+        get() = _submittingState
+
+    private val _currentUser : MutableLiveData<User> = MutableLiveData()
+    val currentUser : LiveData<User>
+        get() = _currentUser
+
+    private val _userProfile : MutableLiveData<UserProfile> = MutableLiveData()
+    val userProfile : LiveData<UserProfile>
+        get() = _userProfile
+
+    private val _activitiesState : MutableLiveData<DataState<List<ActivityItem>>> = MutableLiveData()
+    val activitiesState : LiveData<DataState<List<ActivityItem>>>
+        get() = _activitiesState
+
+    fun getUserInfo() = viewModelScope.launch {
+        _currentUser.postValue(repository.getUserInfo())
+    }
+
+    fun getUserProfile() = viewModelScope.launch {
+        _userProfile.postValue(repository.getUserProfile())
+    }
+
+    fun getClassList() = viewModelScope.launch {
+        _classList.postValue(repository.getClassList())
+    }
+    fun getIssueList(className:String) = viewModelScope.launch {
+        _issueList.postValue(repository.getIssueList(className))
+    }
+    fun checkSubmissions(className: String,issueName:String) = viewModelScope.launch {
+        repository.checkSubmissions(className,issueName)
+            .collect{
+                _submissionState.value = it
+            }
+    }
 
     fun addChannel(channelName: String) = viewModelScope.launch {
         repository.addChannel(channelName).catch {
@@ -47,5 +97,22 @@ class StudentViewModel
         }.collect {
             _loadState.value = it
         }
+    }
+    @ExperimentalCoroutinesApi
+    fun submitToIssue(uri: Uri, className: String, issueName: String, fileName: String,
+                      ) = viewModelScope.launch {
+        repository.submitToIssue(uri, className, issueName, fileName)
+            .collect {
+              _submittingState.value = it
+        }
+    }
+    fun deleteSubmission(submit: Submit) = viewModelScope.launch {
+        repository.deleteSubmission(submit)
+    }
+    fun getActivities(user: UserProfile) = viewModelScope.launch {
+        repository.getActivities(user)
+                .collect {
+                    _activitiesState.value = it
+                }
     }
 }

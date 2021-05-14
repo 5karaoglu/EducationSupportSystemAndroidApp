@@ -44,14 +44,20 @@ class ChatFragment : Fragment(), ChatAdapter.OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentChatBinding.inflate(inflater,container,false)
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.GONE
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
+        if (bottomBar == null){
+            bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
+        }
         bottomBar.visibility = View.VISIBLE
         _binding = null
     }

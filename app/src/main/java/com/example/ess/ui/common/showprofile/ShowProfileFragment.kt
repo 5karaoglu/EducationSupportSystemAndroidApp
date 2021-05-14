@@ -91,7 +91,7 @@ class ShowProfileFragment : Fragment() {
         binding.tvName.text = user.name
         binding.tvProfileHeader.text = user.email
         Picasso.get()
-            .load(user.imageURL)
+            .load(user.imageUrl)
             .fit().centerInside()
             .into(binding.ivPp)
     }

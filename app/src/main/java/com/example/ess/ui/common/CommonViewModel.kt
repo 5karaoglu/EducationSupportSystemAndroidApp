@@ -44,6 +44,22 @@ class CommonViewModel
     val feedState : LiveData<DataState<List<FeedItem>>>
         get() = _feedState
 
+    private val _submitsState : MutableLiveData<DataState<List<Submit>>> = MutableLiveData()
+    val submitsState : LiveData<DataState<List<Submit>>>
+        get() = _submitsState
+
+    private val _downloadState : MutableLiveData<DataState<String>> = MutableLiveData()
+    val downloadState : LiveData<DataState<String>>
+        get() = _downloadState
+
+    private val _commentsState : MutableLiveData<DataState<List<Comment>>> = MutableLiveData()
+    val commentsState : LiveData<DataState<List<Comment>>>
+        get() = _commentsState
+
+    private val _notificationsState : MutableLiveData<DataState<List<Notification>>> = MutableLiveData()
+    val notificationsState : LiveData<DataState<List<Notification>>>
+        get() = _notificationsState
+
 
     fun getUsers(query:String) = viewModelScope.launch {
         repository.getUsers(query)
@@ -93,6 +109,37 @@ class CommonViewModel
             .collect{
                 _feedState.value = it
             }
+    }
+    @ExperimentalCoroutinesApi
+    fun downloadFile(submit: Submit) = viewModelScope.launch {
+        repository.downloadFile(submit)
+                .collect {
+                    _downloadState.value = it
+                }
+    }
+    fun getSubmissions(feedItem: FeedItem) = viewModelScope.launch {
+        repository.getSubmissions(feedItem)
+                .collect{
+                    _submitsState.value = it
+                }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getComments(feedItem: FeedItem) = viewModelScope.launch {
+        repository.getComments(feedItem)
+                .collect{
+                    _commentsState.value = it
+                }
+    }
+    fun addComment(feedItem: FeedItem,comment: String) = viewModelScope.launch {
+        repository.addComment(feedItem,comment)
+    }
+    @ExperimentalCoroutinesApi
+    fun getNotifications() = viewModelScope.launch {
+        repository.getNotifications()
+                .collect{
+                    _notificationsState.value = it
+                }
     }
 
 

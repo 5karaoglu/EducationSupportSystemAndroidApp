@@ -36,25 +36,7 @@ class TeacherRepository
 ){
     private val TAG = "Teacher Repository"
 
-    suspend fun getComments(feedItem: FeedItem): Flow<DataState<List<Comment>>> = flow {
-        emit(DataState.Loading)
-        val list = mutableListOf<Comment>()
-        try {
-            val snapshot = firebaseDatabase.getReference(feedItem.path)
-                    .child("comments").get().await()
-            snapshot.children.forEach{
-                it.getValue(Comment::class.java)?.let { comment ->
-                    comment.subCommentsCount = it.child("sub_comments").childrenCount.toString()
-                    list.add(comment)
-                }
-            }
-            Log.d(TAG, "getComments: $snapshot")
 
-            emit(DataState.Success(list))
-        } catch (cause: EssError) {
-            emit(DataState.Error(cause))
-        }
-    }
 
     suspend fun getSubmits(feedItem: FeedItem): Flow<DataState<List<Submit>>> = flow {
         emit(DataState.Loading)
@@ -118,19 +100,15 @@ class TeacherRepository
             : Flow<DataState<String>> = flow {
         emit(DataState.Loading)
         try {
-            val cUser = firebaseAuth.currentUser
+            val cUser = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}")
+                    .get().await().getValue(UserShort::class.java)
             val push = firebaseDatabase.getReference("Classes").child(className).push()
-            push.child("path").setValue(push.ref.path.toString()).await()
             firebaseDatabase.getReference("Classes/$className").child(push.key!!)
-                .updateChildren(IssueShortMapper.modelToMap(
-                    IssueShort(
-                        title = title,
-                        description = description,
-                        deadline = deadline,
-                        publishedBy = cUser!!.displayName!!,
-                        fileName = fileName,
-                        downloadUrl = downloadUrl
-                    )
+                .setValue(FeedItem(
+                        push.ref.path.wireFormat(),
+                        className, title, description,
+                        downloadUrl.toString(), fileName.toString(),cUser!!.name,cUser.uid,cUser.imageURL,
+                        deadline,"",""
                 )).await()
             emit(DataState.Success("Issue updated successfully !"))
         }catch (cause:EssError){
@@ -138,28 +116,26 @@ class TeacherRepository
         }
     }
 
-    suspend fun updateIssue(className:String,title:String,description:String,
-                            deadline:String,fileName: String?,downloadUrl:String?)
+    @SuppressLint("RestrictedApi")
+    suspend fun updateIssue(className:String, title:String, description:String,
+                            deadline:String, fileName: String?, downloadUrl:String?)
     : Flow<DataState<String>> = flow {
         emit(DataState.Loading)
         try {
-            val cUser = firebaseAuth.currentUser
+            val cUser = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}")
+                    .get().await().getValue(UserShort::class.java)
             var key: String? = null
             val snapshot = firebaseDatabase.getReference("Classes/$className").orderByChild("title").equalTo(title).get().await()
             snapshot.children.forEach {
                 key = it.key
             }
             firebaseDatabase.getReference("Classes/$className/$key")
-                .updateChildren(IssueShortMapper.modelToMap(
-                    IssueShort(
-                        title = title,
-                        description = description,
-                        deadline = deadline,
-                        publishedBy = cUser!!.displayName!!,
-                        fileName = fileName,
-                        downloadUrl = downloadUrl
-                    )
-                )).await()
+                    .setValue(FeedItem(
+                            snapshot.ref.path.wireFormat(),
+                            className, title, description,
+                            downloadUrl.toString(), fileName.toString(),cUser!!.name,cUser.uid,cUser.imageURL,
+                            deadline,"",""
+                    )).await()
             emit(DataState.Success("Issue updated successfully !"))
         }catch (cause:EssError){
             emit(DataState.Error(cause))
@@ -178,17 +154,17 @@ class TeacherRepository
         }catch (cause:EssError){
             sendBlocking(DataState.Error(cause))
         }
-        awaitClose { }
+        awaitClose {  }
     }
 
     suspend fun getIssue(className: String, issue:String) = withContext(Dispatchers.IO){
         val snapshot = firebaseDatabase.getReference("Classes/$className").orderByChild("title").equalTo(issue).get().await()
-        var issueShort: IssueShort? = null
+        var feedItem: FeedItem? = null
         snapshot.children.forEach {
-           issueShort = IssueShortMapper.mapToModel(it.value as HashMap<String, *>)
+           feedItem = it.getValue(FeedItem::class.java)
             Log.d("debug", "getIssue: ${it.child("title").value}")
         }
-        return@withContext issueShort
+        return@withContext feedItem
 
     }
 
@@ -230,20 +206,21 @@ class TeacherRepository
     }
 
     suspend fun getUserInfo() = withContext(Dispatchers.IO){
-        val user = firebaseAuth.currentUser
-        Log.d("debug", "getUserInfo: ${user!!.photoUrl}")
-        return@withContext UserMapper.dbToUser(user!!)
+        val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
+        val user = ss.getValue(User::class.java)
+        Log.d("debug", "getUserInfo: ${user!!.imageUrl}")
+        return@withContext user
 
     }
     suspend fun updateUser(user: User): Flow<DataState<String>> = flow {
-        Log.d("debug", "updateUser: ${user.imageURL}, ${user.name}, ${user.email}")
+        Log.d("debug", "updateUser: ${user.imageUrl}, ${user.name}, ${user.email}")
         emit(DataState.Loading)
         try {
             val cUser = firebaseAuth.currentUser!!
             cUser.updateProfile(UserProfileChangeRequest.Builder()
-                    .setPhotoUri(user.imageURL!!.toUri())
+                    .setPhotoUri(user.imageUrl!!.toUri())
                     .build())
-            firebaseDatabase.getReference("Users/${cUser.uid}/imageURL").setValue(user.imageURL)
+            firebaseDatabase.getReference("Users/${cUser.uid}/imageUrl").setValue(user.imageUrl)
             cUser.updateProfile(UserProfileChangeRequest.Builder()
                     .setDisplayName(user.name)
                     .build())

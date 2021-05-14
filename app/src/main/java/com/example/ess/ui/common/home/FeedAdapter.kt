@@ -1,14 +1,15 @@
-package com.example.ess.ui.teacher.home
+package com.example.ess.ui.common.home
 
+import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.example.ess.R
 import com.example.ess.databinding.HomeSingleItemBinding
 import com.example.ess.model.FeedItem
@@ -21,11 +22,19 @@ class FeedAdapter (
 
 
     class FeedViewHolder(private val binding: HomeSingleItemBinding): RecyclerView.ViewHolder(binding.root){
+        @SuppressLint("SetTextI18n")
         fun bind(feedItem: FeedItem, listener: OnItemClickListener){
             Log.d("debug", "bind: binded")
             binding.tvName.text = feedItem.publishedBy
-            binding.tvLastDeliveryTime.text = "Deadline: " + Functions.tsToDate(feedItem.deadline)
-            binding.btnAttachedFile.text = feedItem.fileName
+            if (feedItem.downloadUrl.isNotEmpty() or feedItem.fileName.isNotEmpty()){
+                binding.btnAttachedFile.visibility = View.VISIBLE
+                binding.btnAttachedFile.text = feedItem.fileName
+            }
+            if (Functions.isTimesUp(feedItem.deadline)){
+                binding.feedHeader.setBackgroundResource(R.drawable.border3)
+            }
+            binding.tvClassName.text = feedItem.className
+            binding.tvLastDeliveryTime.text = "Deadline: " + feedItem.deadline.let { Functions.tsToDate(it) }
             binding.tvDescription.text = feedItem.description
             binding.tvTitle.text = feedItem.title
             binding.tvSubmits.text = feedItem.submitsCount
@@ -57,7 +66,8 @@ class FeedAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         return FeedViewHolder( HomeSingleItemBinding.inflate(LayoutInflater.from(parent.context),
-                parent,false))}
+                parent,false))
+    }
 
 
 

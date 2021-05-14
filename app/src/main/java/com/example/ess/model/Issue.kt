@@ -6,6 +6,9 @@ import com.google.firebase.database.PropertyName
 @IgnoreExtraProperties
 data class IssueShort(
         val path: String = "",
+        @get:PropertyName("class_name")
+        @set:PropertyName("class_name")
+        var className:String = "",
         val title: String = "",
         val description: String = "",
         val deadline: String = "",

@@ -13,9 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ess.R
 import com.example.ess.databinding.FragmentHomeBinding
 import com.example.ess.model.FeedItem
+import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel
-import com.example.ess.ui.teacher.home.FeedAdapter
-import com.example.ess.ui.teacher.home.TeacherHomeFragmentDirections
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,12 +42,12 @@ FeedAdapter.OnItemClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnMessages.setOnClickListener {
-            findNavController().navigate(R.id.action_teacherHomeFragment_to_messagesFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_messagesFragment)
         }
         val adapter = FeedAdapter(this)
         binding.recyclerTeacherNotifications.adapter = adapter
         binding.recyclerTeacherNotifications.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerTeacherNotifications.addItemDecoration(NotificationItemDecoration())
+        binding.recyclerTeacherNotifications.addItemDecoration(FeedItemDecoration())
 
         viewModel.getFeed()
         viewModel.feedState.observe(viewLifecycleOwner){
@@ -67,17 +66,18 @@ FeedAdapter.OnItemClickListener{
     }
 
     override fun onCommentsClicked(feedItem: FeedItem) {
-        val action = TeacherHomeFragmentDirections.actionTeacherHomeFragmentToCommentsFragment(feedItem)
+        val action = HomeFragmentDirections.actionHomeFragmentToCommentsFragment(feedItem)
         findNavController().navigate(action)
     }
 
     override fun onSubmitsClicked(feedItem: FeedItem) {
-        val action = TeacherHomeFragmentDirections.actionTeacherHomeFragmentToSubmitsFragment(feedItem)
+        val action = HomeFragmentDirections.actionHomeFragmentToSubmitsFragment(feedItem)
         findNavController().navigate(action)
     }
 
     override fun onIvClicked(feedItem: FeedItem) {
-        val action = TeacherHomeFragmentDirections.actionTeacherHomeFragmentToShowProfileFragment(null,feedItem)
+        val user = UserShort(feedItem.publishedBy,feedItem.publisherImageUrl,feedItem.publisherUid)
+        val action = HomeFragmentDirections.actionHomeFragmentToShowProfileFragment(user,null)
         findNavController().navigate(action)
     }
 }

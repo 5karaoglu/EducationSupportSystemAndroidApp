@@ -1,14 +1,20 @@
 package com.example.ess.model
 
+import com.google.firebase.database.PropertyName
 import java.io.FileDescriptor
 import java.sql.Timestamp
 
 data class Notification(
-    var priority: Long,
-    var title: String,
-    var descripton: String,
-    var timestamp: Long
+        var name: String,
+        var uid: String,
+        @get:PropertyName("image_url")
+        @set:PropertyName("image_url")
+        var imageUrl: String,
+        var title: String,
+        var descripton: String,
+        var timestamp: Long
 )
+/*
 class NotificationMapper{
     companion object{
         fun modelToMap(notification: Notification): Map<String, Any> {
@@ -28,4 +34,4 @@ class NotificationMapper{
                 timestamp = map["timestamp"] as Long)
         }
     }
-}
+}*/
