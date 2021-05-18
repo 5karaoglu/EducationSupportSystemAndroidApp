@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ess.EssRepository
 import com.example.ess.model.*
 import com.example.ess.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,9 +21,6 @@ class StudentViewModel
     )
     : ViewModel() {
 
-        /*fun insertNotificationToFirebase(channel: String, notification: Notification) = viewModelScope.launch{
-            repository.insertNotificationToFirebase(channel, notification)
-        }*/
 
     private val _dataState : MutableLiveData<DataState<String>> = MutableLiveData()
     val dataState : LiveData<DataState<String>>
@@ -54,21 +50,13 @@ class StudentViewModel
     val currentUser : LiveData<User>
         get() = _currentUser
 
-    private val _userProfile : MutableLiveData<UserProfile> = MutableLiveData()
-    val userProfile : LiveData<UserProfile>
-        get() = _userProfile
 
-    private val _activitiesState : MutableLiveData<DataState<List<ActivityItem>>> = MutableLiveData()
-    val activitiesState : LiveData<DataState<List<ActivityItem>>>
-        get() = _activitiesState
 
     fun getUserInfo() = viewModelScope.launch {
         _currentUser.postValue(repository.getUserInfo())
     }
 
-    fun getUserProfile() = viewModelScope.launch {
-        _userProfile.postValue(repository.getUserProfile())
-    }
+
 
     fun getClassList() = viewModelScope.launch {
         _classList.postValue(repository.getClassList())
@@ -109,10 +97,5 @@ class StudentViewModel
     fun deleteSubmission(submit: Submit) = viewModelScope.launch {
         repository.deleteSubmission(submit)
     }
-    fun getActivities(user: UserProfile) = viewModelScope.launch {
-        repository.getActivities(user)
-                .collect {
-                    _activitiesState.value = it
-                }
-    }
+
 }

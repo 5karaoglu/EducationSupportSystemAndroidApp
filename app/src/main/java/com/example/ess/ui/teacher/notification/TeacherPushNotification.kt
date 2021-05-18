@@ -9,77 +9,50 @@ import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
+import com.example.ess.databinding.FragmentTeacherPushNotificationBinding
 import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TeacherPushNotification : Fragment(R.layout.fragment_teacher_push_notification) {
+class TeacherPushNotification : Fragment() {
 
+    private var _binding: FragmentTeacherPushNotificationBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: TeacherViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTeacherPushNotificationBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val pb = requireActivity().findViewById<ProgressBar>(R.id.pb)
-        val spinnerAllChannels = requireActivity().findViewById<Spinner>(R.id.spinnerAllChannels)
-        val btnSubscribe = requireActivity().findViewById<Button>(R.id.btnSubscribeToChannel)
-        val spinnerTeacherChannels = requireActivity().findViewById<Spinner>(R.id.spinnerTeacherChannels)
-        val etNotification = requireActivity().findViewById<EditText>(R.id.etPushNotification)
-        val btnPush = requireActivity().findViewById<Button>(R.id.buttonPushNotification)
-        val btnBack = requireActivity().findViewById<ImageButton>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-        allSpinnerLoad(spinnerAllChannels,pb,btnPush)
-        teacherSpinnerLoad(spinnerTeacherChannels,pb,btnPush,etNotification)
-        btnPush.setOnClickListener {
-            viewModel.pushNotification(spinnerTeacherChannels.selectedItem.toString(),etNotification.text.toString())
-        }
-        btnSubscribe.setOnClickListener {
-            viewModel.subscribeToChannel(spinnerAllChannels.selectedItem.toString())
+        viewModel.sendNotification()
+       /* binding.apply {
+            btnBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
+            buttonPushNotification.setOnClickListener {
+                viewModel.pushNotification(spinnerTeacherChannels.selectedItem.toString(),etTitle.text.toString(),etDescription.text.toString())
+            }
+            teacherSpinnerLoad(spinnerTeacherChannels,pb,buttonPushNotification)
         }
         viewModel.getAllNotificationChannels()
-        viewModel.getUserNotificationChannels()
+        viewModel.getUserNotificationChannels()*/
 
     }
 
-    private fun allSpinnerLoad(spinner: Spinner,pb: ProgressBar,addChannel: Button){
-        viewModel.allState.observe(viewLifecycleOwner){
-            when(it){
-                is DataState.Loading -> {
-                    pb.visibility = View.VISIBLE
-                    addChannel.visibility = View.INVISIBLE
-                }
-                is DataState.Error -> {
-                    if (pb.visibility == View.VISIBLE) {
-                        pb.visibility = View.GONE
-                        addChannel.visibility = View.VISIBLE
-                    }
-                    Toast.makeText(
-                        requireContext(),
-                        "Error ! ${it.throwable.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                is DataState.Success -> {
-                    if (pb.visibility == View.VISIBLE){
-                        pb.visibility = View.GONE
-                        addChannel.visibility = View.VISIBLE
-                    }
-                    val adapter = ArrayAdapter<String>(
-                        requireContext(),
-                        android.R.layout.simple_spinner_item,
-                        it.data
-                    )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinner.adapter = adapter
-                }
-            }
-        }
-    }
-
-    private fun teacherSpinnerLoad(spinner: Spinner,pb: ProgressBar,addChannel: Button,et:EditText){
+  /*  private fun teacherSpinnerLoad(spinner: Spinner,pb: ProgressBar,addChannel: Button){
         viewModel.userState.observe(viewLifecycleOwner){
             when(it){
                 is DataState.Loading -> {
@@ -112,6 +85,6 @@ class TeacherPushNotification : Fragment(R.layout.fragment_teacher_push_notifica
                 }
             }
         }
-    }
+    }*/
 
 }

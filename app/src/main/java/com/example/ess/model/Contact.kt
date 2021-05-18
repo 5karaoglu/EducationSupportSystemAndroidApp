@@ -1,16 +1,27 @@
 package com.example.ess.model
 
 import android.os.Parcelable
+import com.google.firebase.database.PropertyName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Contact(
-        val chatId: String,
-        val imageUrl: String,
-        val lastMessage: String,
-        val myUid: String,
-        val name: String,
-        val receiverUid: String
+        @get:PropertyName("chat_id")
+        @set:PropertyName("chat_id")
+        var chatId: String = "",
+        @get:PropertyName("image_url")
+        @set:PropertyName("image_url")
+        var imageUrl: String = "",
+        @get:PropertyName("last_message")
+        @set:PropertyName("last_message")
+        var lastMessage: String = "",
+        @get:PropertyName("my_uid")
+        @set:PropertyName("my_uid")
+        var myUid: String = "",
+        val name: String = "",
+        @get:PropertyName("receiver_uid")
+        @set:PropertyName("receiver_uid")
+        var receiverUid: String = ""
 ):Parcelable
 class ContactMapper{
     companion object{

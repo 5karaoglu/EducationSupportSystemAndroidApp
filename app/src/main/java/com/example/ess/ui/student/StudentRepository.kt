@@ -31,33 +31,8 @@ class StudentRepository
                     private val firebaseAuth: FirebaseAuth,
                     private val firebaseStorage: FirebaseStorage):StudentRepoImpl{
 
-    override suspend fun getActivities(user: UserProfile) : Flow<DataState<List<ActivityItem>>> = flow {
-        emit(DataState.Loading)
-        val list = mutableListOf<ActivityItem>()
-        try {
-            val snapshot = firebaseDatabase.getReference("Users/${user.uid}/activities").get().await()
-            snapshot.children.forEach {
-                it.getValue(ActivityItem::class.java)?.let { it1 -> list.add(it1)
-                    Log.d("TAG", "getActivities: $it1")}
-            }
-            if (list.isNotEmpty()){
-                list.reverse()
-                emit(DataState.Success(list))
-            }else{
-                emit(DataState.Empty)
-            }
-        }catch (cause:EssError){
-            emit(DataState.Error(cause))
-        }
-    }
-    suspend fun getUserProfile() = withContext(Dispatchers.IO){
-        val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
-        val user = ss.getValue(UserProfile::class.java)
-        user!!.classesCount = ss.child("Classes").childrenCount.toString()
-        user.friendsCount = ss.child("friends").childrenCount.toString()
-        Log.d("debug", "getUserInfo: ${user.imageUrl}")
-        return@withContext user
-    }
+
+
 
     suspend fun getUserInfo() = withContext(Dispatchers.IO){
         val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
@@ -110,7 +85,7 @@ class StudentRepository
         return@withContext list
     }
 
-    suspend fun deleteSubmission(submit: Submit) = withContext(Dispatchers.IO){
+    suspend fun deleteSubmission(submit: Submit): Any = withContext(Dispatchers.IO){
         firebaseDatabase.getReference(submit.path).child("submits").child(submit.uid).removeValue().await()
     }
 
@@ -183,5 +158,5 @@ class StudentRepository
 interface StudentRepoImpl{
     fun submitToIssue(uri:Uri,className: String,issueName: String,
                       fileName:String): Flow<DataState<String>>
-    suspend fun getActivities(user: UserProfile): Flow<DataState<List<ActivityItem>>>
+
 }

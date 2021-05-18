@@ -96,3 +96,12 @@ class UserMessageMapper{
         }
     }
 }
+data class UserDummy(
+        val uid: String? = null,
+        val name: String? = null,
+        val email: String? = null,
+        @get:PropertyName("image_url")
+        @set:PropertyName("image_url")
+        var imageUrl: String = "",
+        val type: String = "",
+)

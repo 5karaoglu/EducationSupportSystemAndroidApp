@@ -8,7 +8,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/channelName"
+        android:id="@+id/notificationTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="1"
@@ -19,13 +19,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/notificationTitle"
+        android:id="@+id/notificationDes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/channelName" />
+        app:layout_constraintTop_toBottomOf="@+id/notificationTitle" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -33,19 +33,20 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notificationTitle">
+        app:layout_constraintTop_toBottomOf="@+id/notificationDes">
 
-        <ImageView
-            android:id="@+id/ivDes"
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@mipmap/ic_launcher"/>
 
         <TextView
-            android:id="@+id/tvDes"
+            android:id="@+id/tvInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:textSize="12sp"
             android:padding="5dp" />
     </LinearLayout>
 

@@ -67,7 +67,7 @@ class ChatFragment : Fragment(), ChatAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         initProfile(args.contact)
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().popBackStack(R.id.showProfileFragment,false)
         }
         binding.ibSend.setOnClickListener {
             viewModel.sendMessage(args.contact.chatId,binding.etMessage.text.toString())

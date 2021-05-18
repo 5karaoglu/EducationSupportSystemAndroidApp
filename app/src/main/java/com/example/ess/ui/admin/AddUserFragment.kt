@@ -10,74 +10,81 @@ import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
+import com.example.ess.databinding.FragmentAddUserBinding
+import com.example.ess.databinding.FragmentAdminNotificationsBinding
 import com.example.ess.util.DataState
 import com.example.ess.util.Functions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddUserFragment : Fragment(R.layout.fragment_add_user) {
+class AddUserFragment : Fragment() {
 
     private val viewModel: AdminViewModel by viewModels()
     private val TAG = "AddUserFragment"
-    private lateinit var rbStudent: RadioButton
-    private lateinit var rbTeacher: RadioButton
-    private lateinit var rbAdmin: RadioButton
+    private var _binding: FragmentAddUserBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentAddUserBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            buttonLogin.setOnClickListener {
 
-        val buttonLogin = requireActivity().findViewById<Button>(R.id.buttonLogin)
-        val etUsername = requireActivity().findViewById<EditText>(R.id.etUsername)
-        val etPassword = requireActivity().findViewById<EditText>(R.id.etPassword)
-        val radioGroup = requireActivity().findViewById<RadioGroup>(R.id.radioGroup)
-        rbStudent = requireActivity().findViewById<RadioButton>(R.id.rbStudent)
-        rbTeacher = requireActivity().findViewById<RadioButton>(R.id.rbTeacher)
-        rbAdmin = requireActivity().findViewById<RadioButton>(R.id.rbAdmin)
-        buttonLogin.setOnClickListener {
+                if (!etUsername.text.isNullOrEmpty() && !etPassword.text.isNullOrEmpty()){
 
-            if (!etUsername.text.isNullOrEmpty() && !etPassword.text.isNullOrEmpty()){
+                    val email = etUsername.text.toString()
+                    val password = etPassword.text.toString()
+                    val userType = getUserType(radioGroup.checkedRadioButtonId)
 
-                val email = etUsername.text.toString()
-                val password = etPassword.text.toString()
-                val userType = getUserType(radioGroup.checkedRadioButtonId)
+                    viewModel.signUp(email,password,userType)
 
-                viewModel.signUp(email,password,userType)
+                }
 
             }
 
+            viewModel.dataState.observe(viewLifecycleOwner, {
+                when (it) {
+                    is DataState.Success -> {
+                        Toast.makeText(
+                                requireContext(),
+                                "User created successfully !",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                        etUsername.text.clear()
+                        etPassword.text.clear()
+                        findNavController().navigate(R.id.action_addUserFragment_to_adminFragment)
+                    }
+                    is DataState.Error -> {
+                        Toast.makeText(
+                                requireContext(),
+                                "User couldn't created ! ${it.throwable.message}",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    is DataState.Loading -> {
+                        Log.d(TAG, "onViewCreated: loading")
+                    }
+                }
+            })
         }
 
-        viewModel.dataState.observe(viewLifecycleOwner, {
-            when (it) {
-                is DataState.Success -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "User created successfully !",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    etUsername.text.clear()
-                    etPassword.text.clear()
-                    findNavController().navigate(R.id.action_addUserFragment_to_adminFragment)
-                }
-                is DataState.Error -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "User couldn't created ! ${it.throwable.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                is DataState.Loading -> {
-                    Log.d(TAG, "onViewCreated: loading")
-                }
-            }
-        })
+
     }
     private fun getUserType(type: Int):String {
         return when(type){
-            rbStudent.id -> "Student"
-            rbTeacher.id -> "Teacher"
-            rbAdmin.id -> "Admin"
+            binding.rbStudent.id -> "Student"
+            binding.rbTeacher.id -> "Teacher"
+            binding.rbAdmin.id -> "Admin"
             else -> "Student"
         }
     }

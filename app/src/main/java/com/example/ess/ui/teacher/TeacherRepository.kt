@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import com.example.ess.data.NotificationApi
 import com.example.ess.model.*
 import com.example.ess.util.DataState
 import com.example.ess.util.EssError
@@ -13,6 +14,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,11 +35,23 @@ class TeacherRepository
     private val firebaseAuth: FirebaseAuth,
     private var firebaseDatabase: FirebaseDatabase,
     private var firebaseStorage: FirebaseStorage,
-    private val firebaseMessaging: FirebaseMessaging
+    private val notificationApi: NotificationApi
 ){
     private val TAG = "Teacher Repository"
 
-
+    suspend fun pushNotification() = withContext(Dispatchers.IO){
+        val notification = PushNotification(NotificationData("sup","wyd"),"Math")
+        try {
+            val response = notificationApi.postNotification(notification)
+            if (response.isSuccessful){
+                Log.d(TAG, "pushNotification: ${Gson().toJson(response)}")
+            }else {
+                Log.d(TAG, "pushNotification: fail")
+            }
+        }catch (cause: EssError){
+            Log.d(TAG, "pushNotification: ${cause.message}")
+        }
+    }
 
     suspend fun getSubmits(feedItem: FeedItem): Flow<DataState<List<Submit>>> = flow {
         emit(DataState.Loading)
@@ -244,7 +259,7 @@ class TeacherRepository
                 Log.d("debug", "getNotifications: ${notifications.value}")
                 notifications.children.forEach {
                     Log.d("debug", "getNotifications:${it.value} ")
-                        list.add(NotificationMapper.mapToModel(it.value as HashMap<String, *>))
+                     /*   list.add(NotificationMapper.mapToModel(it.value as HashMap<String, *>))*/
                 }
             }
             list.reverse()
@@ -272,7 +287,7 @@ class TeacherRepository
         try {
             val user = firebaseAuth.currentUser
             val keys = firebaseDatabase.getReference("Teachers/${user?.uid}/AuthorizedChannels").orderByKey().get().await()
-            var list = mutableListOf<String>()
+            val list = mutableListOf<String>()
             for (i in (keys.value as HashMap<String,Any>)){
                 list.add(i.key)
             }
@@ -281,11 +296,11 @@ class TeacherRepository
             emit(DataState.Error(cause))
         }
     }
-    suspend fun pushNotification(channelName: String,notificationTitle: String)= withContext(
+    suspend fun pushNotification(channelName: String,notificationTitle: String,description: String)= withContext(
         Dispatchers.IO){
         val user = firebaseAuth.currentUser
         val currentDate = Functions.getCurrentDate()
-        firebaseDatabase.getReference("NotificationChannels/$channelName/$currentDate")
+       /* firebaseDatabase.getReference("NotificationChannels/$channelName/$currentDate")
             .updateChildren(
                 NotificationMapper.modelToMap(
                     Notification(
@@ -293,7 +308,7 @@ class TeacherRepository
                 title = notificationTitle,
                 descripton = user?.email.toString(),
                 timestamp = currentDate)
-                ))
+                ))*/
     }
     suspend fun subscribeToChannel(channelName: String) = withContext(Dispatchers.IO) {
             val user = firebaseAuth.currentUser

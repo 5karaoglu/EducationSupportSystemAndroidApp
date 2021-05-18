@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@drawable/border1">
+    android:background="@drawable/border2">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/ivUser"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_margin="10dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,6 +26,7 @@
         android:maxLines="1"
         android:padding="2dp"
         android:textColor="@color/black"
+        android:textSize="13sp"
         android:text="Fulgencio Joseph"
         app:layout_constraintStart_toEndOf="@+id/ivUser"
         app:layout_constraintTop_toTopOf="@+id/ivUser" />
@@ -38,9 +39,8 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:padding="2dp"
-        android:textSize="12sp"
         android:text="fulgencio@mf.com"
-        app:layout_constraintBottom_toBottomOf="@+id/ivUser"
+        android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/ivUser"
         app:layout_constraintTop_toBottomOf="@+id/tvUsername" />
 

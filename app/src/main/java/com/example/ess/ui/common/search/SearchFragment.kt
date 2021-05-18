@@ -1,7 +1,6 @@
 package com.example.ess.ui.common.search
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ess.R
 import com.example.ess.databinding.FragmentSearchBinding
-import com.example.ess.model.UserShort
+import com.example.ess.model.User
 import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,18 +51,38 @@ SearchAdapter.OnItemClickListener{
 
         viewModel.userState.observe(viewLifecycleOwner){
             when(it){
-                is DataState.Loading -> Log.d(TAG, "onViewCreated: loading")
-                is DataState.Error -> Toast.makeText(requireContext(), "Error ! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
+                is DataState.Loading -> binding.apply {
+                    recyclerSearch.visibility = View.GONE
+                    tvEmpty.visibility = View.GONE
+                    pb.visibility = View.VISIBLE
+                }
+                is DataState.Error -> {
+                    Toast.makeText(requireContext(), "Error ! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
+                    binding.apply {
+                        recyclerSearch.visibility = View.GONE
+                        tvEmpty.visibility = View.VISIBLE
+                        pb.visibility = View.GONE
+                    }
+                }
                 is DataState.Success -> {
-
                     adapter.submitList(it.data)
+                    binding.apply {
+                        recyclerSearch.visibility = View.VISIBLE
+                        tvEmpty.visibility = View.GONE
+                        pb.visibility = View.GONE
+                    }
+                }
+                is DataState.Empty -> binding.apply {
+                    recyclerSearch.visibility = View.GONE
+                    tvEmpty.visibility = View.VISIBLE
+                    pb.visibility = View.GONE
                 }
             }
         }
     }
 
-    override fun onItemClicked(userShort: UserShort) {
-        val action = SearchFragmentDirections.actionSearchFragmentToShowProfileFragment(userShort,null)
+    override fun onItemClicked(user: User) {
+        val action = SearchFragmentDirections.actionSearchFragmentToShowProfileFragment(user,null)
         findNavController().navigate(action)
     }
 }

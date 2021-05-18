@@ -1,4 +1,4 @@
-package com.example.ess.ui.student.profile
+package com.example.ess.ui.common.profile
 
 import android.annotation.SuppressLint
 import android.util.Log

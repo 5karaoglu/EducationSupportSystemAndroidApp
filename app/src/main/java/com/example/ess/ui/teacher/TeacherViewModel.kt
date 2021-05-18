@@ -77,8 +77,8 @@ class TeacherViewModel
     val submitsState : LiveData<DataState<List<Submit>>>
         get() = _submitsState
 
-    fun pushNotification(channelName: String, notificationTitle: String) = viewModelScope.launch {
-        repository.pushNotification(channelName,notificationTitle)
+    fun pushNotification(channelName: String, notificationTitle: String,description: String) = viewModelScope.launch {
+        repository.pushNotification(channelName,notificationTitle,description)
     }
 
     fun subscribeToChannel(channelName: String) = viewModelScope.launch {
@@ -163,5 +163,9 @@ class TeacherViewModel
                 .collect{
                     _submitsState.value = it
                 }
+    }
+
+    fun sendNotification() = viewModelScope.launch {
+        repository.pushNotification()
     }
 }

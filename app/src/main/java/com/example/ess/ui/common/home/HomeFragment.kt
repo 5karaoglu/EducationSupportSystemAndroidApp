@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ess.R
 import com.example.ess.databinding.FragmentHomeBinding
 import com.example.ess.model.FeedItem
+import com.example.ess.model.User
 import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.util.DataState
@@ -41,6 +42,10 @@ FeedAdapter.OnItemClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.btnSubscribe.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_subscribeClassFragment)
+        }
+        viewModel.dummy()
         binding.btnMessages.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_messagesFragment)
         }
@@ -76,7 +81,7 @@ FeedAdapter.OnItemClickListener{
     }
 
     override fun onIvClicked(feedItem: FeedItem) {
-        val user = UserShort(feedItem.publishedBy,feedItem.publisherImageUrl,feedItem.publisherUid)
+        val user = User(feedItem.publisherUid,feedItem.publishedBy,"",feedItem.publisherImageUrl)
         val action = HomeFragmentDirections.actionHomeFragmentToShowProfileFragment(user,null)
         findNavController().navigate(action)
     }

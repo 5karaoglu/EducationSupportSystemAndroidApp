@@ -7,11 +7,11 @@
     <string name="password">Password:</string>
     <string name="login">LOGIN</string>
     <string name="signup">SIGN UP</string>
-    <string name="push_notification">PUSH NOTIFICATION</string>
-    <string name="add_user">ADD USER</string>
+    <string name="push_notification">Push Notification</string>
+    <string name="add_user">Add User</string>
     <string name="set_user_channels">Set User Channels</string>
     <string name="add_channel">Add Channel</string>
-    <string name="admin_panel">ADMIN PANEL</string>
+    <string name="admin_panel">Admin Panel</string>
     <string name="role">Role:</string>
     <string name="student">Student</string>
     <string name="teacher">Teacher</string>
@@ -54,6 +54,7 @@
     <string name="profile">Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="messages">Messages</string>
+    <string name="friend_requests">Friend Requests</string>
     <string name="comments">Comments</string>
     <string name="submits">Submits</string>
     <string name="submit">Submit</string>

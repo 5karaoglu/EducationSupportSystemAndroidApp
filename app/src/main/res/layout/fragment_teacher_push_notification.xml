@@ -45,42 +45,15 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:padding="5dp"
-        android:text="@string/notification_channel_name"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
-    <Spinner
-        android:id="@+id/spinnerAllChannels"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-    <Button
-        android:id="@+id/btnSubscribeToChannel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/subscribe_to_channel"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerAllChannels" />
-
-
-    <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
+        android:textSize="12sp"
         android:text="@string/notification_channel_select"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/btnSubscribeToChannel" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
 
     <Spinner
         android:id="@+id/spinnerTeacherChannels"
@@ -95,27 +68,44 @@
 
 
     <EditText
-        android:id="@+id/etPushNotification"
+        android:id="@+id/etTitle"
         android:layout_width="0dp"
-        android:hint="@string/title_here"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:hint="@string/title_here"
         android:maxLines="1"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/spinnerTeacherChannels" />
+
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:inputType="textMultiLine"
+        android:hint="Description here"
+        android:maxLines="1"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/etTitle" />
 
     <Button
         android:id="@+id/buttonPushNotification"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:layout_marginTop="10dp"
         android:text="@string/push_notification"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/etPushNotification" />
+        app:layout_constraintTop_toBottomOf="@+id/etDescription" />
 
     <ProgressBar
         android:id="@+id/pb"
@@ -124,19 +114,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonPushNotification" />
+        app:layout_constraintTop_toTopOf="@+id/appBarLayout2" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="80dp" />
+        app:layout_constraintGuide_begin="65dp" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="80dp"/>
+        app:layout_constraintGuide_end="68dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

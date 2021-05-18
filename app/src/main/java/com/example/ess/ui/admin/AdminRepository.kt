@@ -3,7 +3,6 @@ package com.example.ess.ui.admin
 import android.util.Log
 import androidx.compose.runtime.key
 import com.example.ess.model.Notification
-import com.example.ess.model.NotificationMapper
 import com.example.ess.util.DataState
 import com.example.ess.util.EssError
 import com.example.ess.util.Functions
@@ -37,17 +36,15 @@ class AdminRepository
         }
     }
 
-    suspend fun createNotificationChannel(channelName: String): Flow<DataState<String>> = flow {
+    suspend fun createNotificationChannel(className: String): Flow<DataState<String>> = flow {
         emit(DataState.Loading)
         val currentDate = Functions.getCurrentDate()
         try {
-            firebaseDatabase.getReference("NotificationChannels/$channelName/$currentDate")
-                    .updateChildren(NotificationMapper.modelToMap(Notification(
-                        priority = 1,
-                        title = "Channel created !",
-                        descripton = "created by admin",
-                        timestamp = currentDate))).await()
-            emit(DataState.Success(channelName))
+            val not = Notification("root",className,"9oba9GFOvtZ6wvX4vonlUzJVEUa2","https://t3.ftcdn.net/jpg/03/62/56/24/360_F_362562495_Gau0POzcwR8JCfQuikVUTqzMFTo78vkF.jpg",
+            "Class created!","",currentDate.toString())
+            firebaseDatabase.getReference("Notifications/$className").push()
+                    .setValue(not).await()
+            emit(DataState.Success(className))
         }catch (cause: EssError){
             emit(DataState.Error(cause))
         }
@@ -55,10 +52,10 @@ class AdminRepository
     suspend fun getNotificationChannels(): Flow<DataState<List<String>>> = flow {
         emit(DataState.Loading)
         try {
-            val keys = firebaseDatabase.getReference("NotificationChannels").orderByKey().get().await()
-            var list = mutableListOf<String>()
-            for (i in (keys.value as HashMap<String,Any>)){
-                list.add(i.key)
+            val keys = firebaseDatabase.getReference("Classes").orderByKey().get().await()
+            val list = mutableListOf<String>()
+            keys.children.forEach {
+                it.key?.let { it1 -> list.add(it1) }
             }
             emit(DataState.Success(list))
         }catch (cause: EssError){
@@ -67,11 +64,8 @@ class AdminRepository
     }
     suspend fun pushNotificationToChannel(channelName: String,notificationTitle: String)= withContext(Dispatchers.IO){
         val currentDate = Functions.getCurrentDate()
-        firebaseDatabase.getReference("NotificationChannels/$channelName/$currentDate")
-            .updateChildren(NotificationMapper.modelToMap(Notification(
-                priority = 1,
-                title = notificationTitle,
-                descripton = "admin",
-                timestamp = currentDate)))
+        firebaseDatabase.getReference("NotificationChannels/$channelName").push()
+            .setValue(Notification("root",channelName,"9oba9GFOvtZ6wvX4vonlUzJVEUa2","https://t3.ftcdn.net/jpg/03/62/56/24/360_F_362562495_Gau0POzcwR8JCfQuikVUTqzMFTo78vkF.jpg",
+            notificationTitle,"",currentDate.toString()))
     }
 }

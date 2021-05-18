@@ -16,8 +16,8 @@ import javax.inject.Inject
 class CommonViewModel
     @Inject constructor(private val repository: CommonRepository): ViewModel() {
 
-    private var _userState: MutableLiveData<DataState<List<UserShort>>> = MutableLiveData()
-    val userState : LiveData<DataState<List<UserShort>>>
+    private var _userState: MutableLiveData<DataState<List<User>>> = MutableLiveData()
+    val userState : LiveData<DataState<List<User>>>
         get() = _userState
 
     private var _contactState: MutableLiveData<DataState<List<Contact>>> = MutableLiveData()
@@ -59,6 +59,30 @@ class CommonViewModel
     private val _notificationsState : MutableLiveData<DataState<List<Notification>>> = MutableLiveData()
     val notificationsState : LiveData<DataState<List<Notification>>>
         get() = _notificationsState
+
+    private val _friendRequestsState : MutableLiveData<DataState<List<User>>> = MutableLiveData()
+    val friendRequestsState : LiveData<DataState<List<User>>>
+        get() = _friendRequestsState
+
+    private var _isFriend: MutableLiveData<Boolean> = MutableLiveData()
+    val isFriend : LiveData<Boolean>
+        get() = _isFriend
+
+    private val _userProfile : MutableLiveData<UserProfile> = MutableLiveData()
+    val userProfile : LiveData<UserProfile>
+        get() = _userProfile
+
+    private val _activitiesState : MutableLiveData<DataState<List<ActivityItem>>> = MutableLiveData()
+    val activitiesState : LiveData<DataState<List<ActivityItem>>>
+        get() = _activitiesState
+
+    private val _classesState : MutableLiveData<DataState<List<String>>> = MutableLiveData()
+    val classesState : LiveData<DataState<List<String>>>
+        get() = _classesState
+
+    private val _subscribeState : MutableLiveData<DataState<String>> = MutableLiveData()
+    val subscribeState : LiveData<DataState<String>>
+        get() = _subscribeState
 
 
     fun getUsers(query:String) = viewModelScope.launch {
@@ -140,6 +164,57 @@ class CommonViewModel
                 .collect{
                     _notificationsState.value = it
                 }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getFriendRequests() = viewModelScope.launch {
+        repository.getFriendRequests()
+            .collect{
+                _friendRequestsState.value = it
+            }
+    }
+
+    fun handleFriendRequest(user: User,situation:Boolean) = viewModelScope.launch {
+        if (situation){
+            repository.addFriend(user)
+        }else{
+            repository.denyFriendRequest(user)
+        }
+    }
+
+    fun sendFriendRequest(user: UserProfile) = viewModelScope.launch {
+        repository.sendFriendRequest(user)
+    }
+
+    fun isFriend(user: UserProfile) = viewModelScope.launch {
+        _isFriend.postValue(repository.isFriend(user))
+    }
+    fun getActivities(user: UserProfile) = viewModelScope.launch {
+        repository.getActivities(user)
+            .collect {
+                _activitiesState.value = it
+            }
+    }
+    fun getUserProfile() = viewModelScope.launch {
+        _userProfile.postValue(repository.getUserProfile())
+    }
+    fun getUserProfile(uid: String) = viewModelScope.launch {
+        _userProfile.postValue(repository.getUserProfile(uid))
+    }
+    fun dummy() = viewModelScope.launch {
+        repository.dummyData()
+    }
+    fun getClassList() = viewModelScope.launch {
+        repository.getClassList()
+            .collect{
+                _classesState.value = it
+            }
+    }
+    fun subscribeToClass(className: String) = viewModelScope.launch {
+        repository.subscribeToChannel(className)
+            .collect{
+                _subscribeState.value = it
+            }
     }
 
 

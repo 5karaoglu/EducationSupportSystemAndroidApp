@@ -1,4 +1,4 @@
-package com.example.ess.ui.common.editProfile
+package com.example.ess.ui.common.profile.editProfile
 
 import android.net.Uri
 import android.os.Bundle

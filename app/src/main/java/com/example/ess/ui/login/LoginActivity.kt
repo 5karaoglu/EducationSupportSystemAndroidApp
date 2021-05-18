@@ -1,8 +1,10 @@
 package com.example.ess.ui.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -11,6 +13,7 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.ess.R
+import com.example.ess.databinding.ActivityLoginBinding
 import com.example.ess.ui.admin.AdminActivity
 import com.example.ess.ui.admin.AdminRepository
 import com.example.ess.ui.student.StudentActivity
@@ -23,18 +26,23 @@ class LoginActivity : AppCompatActivity() {
 
     private val TAG = "Login Activity"
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var binding : ActivityLoginBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val loadingScreen = findViewById<RelativeLayout>(R.id.blurScreen)
 
         viewModel.dataState.observe(this, {
             when (it) {
                 is DataState.Success -> {
                     Toast.makeText(this, "Authorization Success !", Toast.LENGTH_SHORT).show()
-                    loadingScreen.visibility = View.GONE
+                    binding.apply {
+                        progressOverlay.visibility = View.GONE
+                        buttonLogin.isEnabled = true
+                    }
                     viewModel.subscribeChannels()
                     when(it.data){
                         "Student" -> {
@@ -55,21 +63,23 @@ class LoginActivity : AppCompatActivity() {
                 is DataState.Error -> {
                     Toast.makeText(this, "Error: ${it.throwable.message}", Toast.LENGTH_SHORT)
                             .show()
-                    loadingScreen.visibility = View.GONE
+                    binding.apply {
+                        progressOverlay.visibility = View.GONE
+                        buttonLogin.isEnabled = true
+                    }
                 }
                 is DataState.Loading -> {
-                    Log.d(TAG, "onCreate: loading")
-                    loadingScreen.visibility = View.VISIBLE
+                    binding.apply {
+                        progressOverlay.visibility = View.VISIBLE
+                        buttonLogin.isEnabled = false
+                    }
                 }
             }
         })
-
-        val button = findViewById<Button>(R.id.buttonLogin)
-        val email = findViewById<EditText>(R.id.etUsername)
-        val password = findViewById<EditText>(R.id.etPassword)
-        button.setOnClickListener {
-            Log.d(TAG, "loginbutton clicked")
-            viewModel.signIn(email.text.toString(),password.text.toString())
+        binding.apply {
+            buttonLogin.setOnClickListener {
+                viewModel.signIn(etUsername.text.toString(),etPassword.text.toString())
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.ess.ui.login
 
-import android.util.Log
 import com.example.ess.util.DataState
 import com.example.ess.util.EssError
 import com.google.firebase.auth.FirebaseAuth
@@ -19,22 +18,22 @@ class LoginRepository
     private var firebaseDatabase: FirebaseDatabase,
     private val firebaseMessaging: FirebaseMessaging
 ){
-    private val TAG = "Login Repository"
 
 
      suspend fun signIn(email:String, password: String): Flow<DataState<*>?> = flow{
         emit(DataState.Loading)
         try {
+            firebaseDatabase.reference
             val auth = firebaseAuth.signInWithEmailAndPassword(email,password).await()
             val userType = firebaseDatabase.getReference("Users").child(auth.user!!.uid).child("type").get().await()
-            if (userType.exists()) emit(DataState.Success(userType.getValue(String::class.java)));
+            if (userType.exists()) emit(DataState.Success(userType.getValue(String::class.java)))
             else emit(DataState.Error(EssError("User dont have a role ! Contact with your admin.",Throwable())))
         }catch (cause: EssError){
             emit(DataState.Error(cause))
         }
     }
     suspend fun subscribeChannels(){
-        val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/SubscribedChannels").get().await()
+        val snapshot = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}/Classes").get().await()
         snapshot.children.forEach {
             firebaseMessaging.subscribeToTopic(it.key as String)
         }

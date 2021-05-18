@@ -1,34 +1,33 @@
-package com.example.ess.ui.student.notifications
+package com.example.ess.ui.common.friendRequests
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ess.R
-import com.example.ess.databinding.FragmentStudentNotificationsBinding
-import com.example.ess.model.Notification
+import com.example.ess.databinding.FragmentFriendRequestsBinding
+import com.example.ess.model.User
 import com.example.ess.ui.common.CommonViewModel
-import com.example.ess.ui.student.StudentViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
-class StudentNotificationsFragment : Fragment() {
+class FriendRequestsFragment : Fragment(),
+FriendRequestsAdapter.OnItemClickListener{
 
-    private val viewModel: CommonViewModel by viewModels()
-    private var _binding: FragmentStudentNotificationsBinding? = null
+    private var _binding: FragmentFriendRequestsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: CommonViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentStudentNotificationsBinding.inflate(inflater,container,false)
+        _binding = FragmentFriendRequestsBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -40,24 +39,27 @@ class StudentNotificationsFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnAddChannelFragment.setOnClickListener {
-            findNavController().navigate(R.id.action_studentNotificationsFragment_to_studentAddChannel)
-        }
-        viewModel.getNotifications()
-        val adapter = NotificationsAdapter()
-        binding.recyclerStudentNotifications.apply {
+        val adapter = FriendRequestsAdapter(this)
+        binding.recycler.apply {
             this.adapter = adapter
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(NotificationItemDecoration())
         }
-        viewModel.notificationsState.observe(viewLifecycleOwner){
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        viewModel.getFriendRequests()
+        viewModel.friendRequestsState.observe(viewLifecycleOwner){
             when(it){
-                is DataState.Loading -> {
-                    binding.pb.visibility = View.VISIBLE
-                }
+                is DataState.Loading -> {binding.pb.visibility = View.VISIBLE}
+                DataState.Empty -> TODO()
                 is DataState.Error -> {
-                    Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                     binding.pb.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Error! ${it.throwable.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 is DataState.Success -> {
                     binding.pb.visibility = View.GONE
@@ -65,6 +67,18 @@ class StudentNotificationsFragment : Fragment() {
                 }
             }
         }
+    }
 
+    override fun onApproveClicked(user: User) {
+        viewModel.handleFriendRequest(user,true)
+    }
+
+    override fun onDenyClicked(user: User) {
+        viewModel.handleFriendRequest(user,false)
+    }
+
+    override fun onIvClicked(user: User) {
+        val action = FriendRequestsFragmentDirections.actionFriendRequestsFragmentToShowProfileFragment(user,null)
+        findNavController().navigate(action)
     }
 }

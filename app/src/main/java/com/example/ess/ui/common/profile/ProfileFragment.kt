@@ -1,4 +1,4 @@
-package com.example.ess.ui.student.profile
+package com.example.ess.ui.common.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,24 +9,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ess.databinding.FragmentStudentProfileBinding
+import com.example.ess.R
+import com.example.ess.databinding.FragmentProfileBinding
 import com.example.ess.model.UserProfile
-import com.example.ess.ui.student.StudentViewModel
+import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class StudentProfileFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
-        private var _binding: FragmentStudentProfileBinding? = null
+    private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudentViewModel by viewModels()
+    private val viewModel: CommonViewModel by viewModels()
     private  var cUser: UserProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentStudentProfileBinding.inflate(inflater,container,false)
+        _binding = FragmentProfileBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -38,8 +39,14 @@ class StudentProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.ibEdit.setOnClickListener {
-            val action = StudentProfileFragmentDirections.actionStudentProfileFragmentToEditProfileFragment(cUser!!)
+            val action =
+                ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(
+                    cUser!!
+                )
             findNavController().navigate(action)
+        }
+        binding.ibRequests.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_friendRequestsFragment)
         }
 
         viewModel.userProfile.observe(viewLifecycleOwner){ user ->

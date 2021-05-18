@@ -8,28 +8,37 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
+import com.example.ess.databinding.FragmentAdminBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class AdminFragment : Fragment(R.layout.fragment_admin) {
+class AdminFragment : Fragment() {
+
+    private var _binding: FragmentAdminBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentAdminBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btnPushNotifications = requireActivity().findViewById<Button>(R.id.btnPushNotification)
-        val btnAddUser = requireActivity().findViewById<Button>(R.id.btnAddUser)
-        val btnSetUserChannels = requireActivity().findViewById<Button>(R.id.btnSetUserChannels)
 
-        btnPushNotifications.setOnClickListener {
-            findNavController().navigate(R.id.action_adminFragment_to_adminNotificationsFragment)
-        }
-
-        btnAddUser.setOnClickListener {
-            findNavController().navigate(R.id.action_adminFragment_to_addUserFragment)
-        }
-        btnSetUserChannels.setOnClickListener {
-            findNavController().navigate(R.id.action_adminFragment_to_adminSetUserChannels)
+        binding.apply {
+            btnPushNotification.setOnClickListener {
+                findNavController().navigate(R.id.action_adminFragment_to_adminNotificationsFragment)
+            }
+            btnAddUser.setOnClickListener {
+                findNavController().navigate(R.id.action_adminFragment_to_addUserFragment)
+            }
         }
     }
 
