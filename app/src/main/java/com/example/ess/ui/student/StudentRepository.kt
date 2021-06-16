@@ -23,18 +23,15 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 
 @Singleton
 class StudentRepository
 @Inject constructor(private val firebaseDatabase: FirebaseDatabase,
                     private val firebaseAuth: FirebaseAuth,
-                    private val firebaseStorage: FirebaseStorage):StudentRepoImpl{
+                    private val firebaseStorage: FirebaseStorage) : StudentRepoImpl {
 
 
-
-
-    suspend fun getUserInfo() = withContext(Dispatchers.IO){
+    suspend fun getUserInfo() = withContext(Dispatchers.IO) {
         val ss = firebaseDatabase.getReference("Users/${firebaseAuth.currentUser!!.uid}").get().await()
         val user = ss.getValue(User::class.java)
         Log.d("debug", "getUserInfo: ${user!!.imageUrl}")
@@ -42,13 +39,13 @@ class StudentRepository
 
     }
 
-    suspend fun addChannel(channelName: String) : Flow<DataState<String>> = flow {
+    suspend fun addChannel(channelName: String): Flow<DataState<String>> = flow {
         emit(DataState.Loading)
         try {
             val user = firebaseAuth.currentUser
             firebaseDatabase.getReference("Students/${user?.uid}/Channels/$channelName").setValue(true).await()
             emit(DataState.Success("$channelName added to ${user?.email}"))
-        }catch (cause: EssError){
+        } catch (cause: EssError) {
             emit(DataState.Error(cause))
         }
     }
@@ -58,15 +55,16 @@ class StudentRepository
         try {
             val keys = firebaseDatabase.getReference("NotificationChannels").orderByKey().get().await()
             val list = mutableListOf<String>()
-            (keys.value as HashMap<String,Any>).forEach { i ->
+            (keys.value as HashMap<String, Any>).forEach { i ->
                 list.add(i.key)
             }
             emit(DataState.Success(list))
-        }catch (cause: EssError){
+        } catch (cause: EssError) {
             emit(DataState.Error(cause))
         }
     }
-    suspend fun getClassList() = withContext(Dispatchers.IO){
+
+    suspend fun getClassList() = withContext(Dispatchers.IO) {
         val uid = firebaseAuth.currentUser!!.uid
         val list = mutableListOf<String>()
         val snapshot = firebaseDatabase.getReference("Users/$uid/Classes").orderByKey().get().await()
@@ -76,7 +74,7 @@ class StudentRepository
         return@withContext list
     }
 
-    suspend fun getIssueList(className: String) = withContext(Dispatchers.IO){
+    suspend fun getIssueList(className: String) = withContext(Dispatchers.IO) {
         val list = mutableListOf<String>()
         val snapshot = firebaseDatabase.getReference("Classes/$className").orderByChild("title").get().await()
         snapshot.children.forEach {
@@ -85,16 +83,16 @@ class StudentRepository
         return@withContext list
     }
 
-    suspend fun deleteSubmission(submit: Submit): Any = withContext(Dispatchers.IO){
+    suspend fun deleteSubmission(submit: Submit): Any = withContext(Dispatchers.IO) {
         firebaseDatabase.getReference(submit.path).child("submits").child(submit.uid).removeValue().await()
     }
 
     @SuppressLint("RestrictedApi")
-    suspend fun checkSubmissions(className: String, issueName: String) : Flow<DataState<Submit?>> = flow {
+    suspend fun checkSubmissions(className: String, issueName: String): Flow<DataState<Submit?>> = flow {
         emit(DataState.Loading)
         try {
             val snapshot = firebaseDatabase.getReference("Classes").child(className).orderByChild("title").equalTo(issueName).get().await()
-            var path : String? = null
+            var path: String? = null
             snapshot.children.forEach {
                 path = it.ref.path.wireFormat()
             }
@@ -104,14 +102,14 @@ class StudentRepository
             ss2.children.forEach {
                 submit = it.getValue(Submit::class.java)
             }
-                Log.d("TAG", "checkSubmissions: $submit")
+            Log.d("TAG", "checkSubmissions: $submit")
             if (submit != null) {
                 emit(DataState.Success(submit))
             } else {
                 emit(DataState.Empty)
             }
 
-        }catch (cause: EssError){
+        } catch (cause: EssError) {
             emit(DataState.Error(cause))
         }
     }
@@ -119,16 +117,16 @@ class StudentRepository
     @SuppressLint("RestrictedApi")
     @ExperimentalCoroutinesApi
     override fun submitToIssue(
-        uri: Uri,
-        className: String,
-        issueName: String,
-        fileName: String
+            uri: Uri,
+            className: String,
+            issueName: String,
+            fileName: String
     ): Flow<DataState<String>> = callbackFlow {
         offer(DataState.Loading)
-        val file =firebaseStorage.getReference("Classes/$className/$issueName/${firebaseAuth.currentUser!!.uid}/$fileName")
+        val file = firebaseStorage.getReference("Classes/$className/$issueName/${firebaseAuth.currentUser!!.uid}/$fileName")
         val listener = OnProgressListener<UploadTask.TaskSnapshot> {
-            offer(DataState.Progress(((100*it.bytesTransferred)/it.totalByteCount).toString()))
-             }
+            offer(DataState.Progress(((100 * it.bytesTransferred) / it.totalByteCount).toString()))
+        }
         try {
             file.putFile(uri).addOnProgressListener(listener).await()
             val snapshot = firebaseDatabase.getReference("Users").child(firebaseAuth.currentUser!!.uid).get().await()
@@ -139,15 +137,15 @@ class StudentRepository
                 path = it.ref.path.wireFormat()
             }
 
-            val submit = Submit(path,user!!.uid,user.name,user.imageURL,
-                Functions.getCurrentDate().toString(),fileName,file.downloadUrl.await().toString())
+            val submit = Submit(path, user!!.uid, user.name, user.imageURL,
+                    Functions.getCurrentDate().toString(), fileName, file.downloadUrl.await().toString())
             firebaseDatabase.getReference(path).child("submits").child(user.uid).setValue(submit).await()
             //adding activity
-            val submission = ActivityItem(className,issueName,fileName,Functions.getCurrentDate().toString(),"submission")
+            val submission = ActivityItem(className, issueName, fileName, Functions.getCurrentDate().toString(), "submission")
             firebaseDatabase.getReference("Users/${user.uid}/activities").push().setValue(submission).await()
             //
             offer(DataState.Success(file.downloadUrl.await().toString()))
-        }catch (cause:EssError){
+        } catch (cause: EssError) {
             offer(DataState.Error(cause))
         }
         awaitClose { file.putFile(uri).removeOnProgressListener(listener) }
@@ -155,8 +153,9 @@ class StudentRepository
 
 
 }
-interface StudentRepoImpl{
-    fun submitToIssue(uri:Uri,className: String,issueName: String,
-                      fileName:String): Flow<DataState<String>>
+
+interface StudentRepoImpl {
+    fun submitToIssue(uri: Uri, className: String, issueName: String,
+                      fileName: String): Flow<DataState<String>>
 
 }

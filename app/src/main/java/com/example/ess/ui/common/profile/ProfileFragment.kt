@@ -24,10 +24,10 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommonViewModel by viewModels()
-    private  var cUser: UserProfile? = null
+    private var cUser: UserProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentProfileBinding.inflate(inflater,container,false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,16 +40,16 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.ibEdit.setOnClickListener {
             val action =
-                ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(
-                    cUser!!
-                )
+                    ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(
+                            cUser!!
+                    )
             findNavController().navigate(action)
         }
         binding.ibRequests.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_friendRequestsFragment)
         }
 
-        viewModel.userProfile.observe(viewLifecycleOwner){ user ->
+        viewModel.userProfile.observe(viewLifecycleOwner) { user ->
             cUser = user
             Picasso.get()
                     .load(user.imageUrl)
@@ -62,8 +62,8 @@ class ProfileFragment : Fragment() {
             binding.tvFriendsCount.text = user.friendsCount
             viewModel.getActivities(user)
         }
-        viewModel.activitiesState.observe(viewLifecycleOwner){ it ->
-            when(it){
+        viewModel.activitiesState.observe(viewLifecycleOwner) { it ->
+            when (it) {
                 is DataState.Loading -> {
                     binding.recycler.visibility = View.GONE
                     binding.pb.visibility = View.VISIBLE

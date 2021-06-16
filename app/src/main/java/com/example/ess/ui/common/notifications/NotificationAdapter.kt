@@ -14,13 +14,13 @@ import com.example.ess.model.Notification
 import com.example.ess.util.Functions
 import com.squareup.picasso.Picasso
 
-class NotificationsAdapter (): ListAdapter<Notification, NotificationsAdapter.NotificationsViewHolder>(Comparator()) {
+class NotificationsAdapter() : ListAdapter<Notification, NotificationsAdapter.NotificationsViewHolder>(Comparator()) {
 
 
-    class NotificationsViewHolder(private val binding: NotificationSingleItemBinding): RecyclerView.ViewHolder(binding.root){
-        private val TAG ="NotificationAdapter"
+    class NotificationsViewHolder(private val binding: NotificationSingleItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val TAG = "NotificationAdapter"
 
-        fun bind(notification: Notification){
+        fun bind(notification: Notification) {
             binding.notificationTitle.text = notification.title
             binding.notificationDes.text = notification.description
             Picasso.get()
@@ -35,10 +35,11 @@ class NotificationsAdapter (): ListAdapter<Notification, NotificationsAdapter.No
                     .italic { append(Functions.tsToDate(notification.timestamp)) }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationsViewHolder {
         Log.d("TAG", "onCreateViewHolder: its created")
         val view = NotificationSingleItemBinding.inflate(LayoutInflater.from(parent.context),
-        parent,false)
+                parent, false)
         return NotificationsViewHolder(view)
     }
 
@@ -46,8 +47,9 @@ class NotificationsAdapter (): ListAdapter<Notification, NotificationsAdapter.No
         val currentNotification = getItem(position)
         holder.bind(currentNotification)
     }
-    class Comparator(): DiffUtil.ItemCallback<Notification>(){
-        private val TAG ="NotificationAdapter"
+
+    class Comparator() : DiffUtil.ItemCallback<Notification>() {
+        private val TAG = "NotificationAdapter"
         override fun areItemsTheSame(oldItem: Notification, newItem: Notification): Boolean {
             Log.d(TAG, "areItemsTheSame: ${oldItem == newItem}")
             return false

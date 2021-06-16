@@ -2,21 +2,18 @@ package com.example.ess.ui.common.showprofile
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ess.R
-import com.example.ess.databinding.FragmentSearchBinding
 import com.example.ess.databinding.FragmentShowProfileBinding
 import com.example.ess.model.User
 import com.example.ess.model.UserProfile
-import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.ui.common.profile.ActivitiesAdapter
 import com.example.ess.util.DataState
@@ -27,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ShowProfileFragment : Fragment() {
 
-    private var _binding : FragmentShowProfileBinding? = null
+    private var _binding: FragmentShowProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommonViewModel by viewModels()
     private val navArgs: ShowProfileFragmentArgs by navArgs()
@@ -38,11 +35,11 @@ class ShowProfileFragment : Fragment() {
     private lateinit var adapter: ActivitiesAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentShowProfileBinding.inflate(inflater,container,false)
+        _binding = FragmentShowProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,64 +61,72 @@ class ShowProfileFragment : Fragment() {
                 viewModel.getContact(profileUid!!)
             }
         }
-        if (navArgs.user != null){
+        if (navArgs.user != null) {
             profileUid = navArgs.user!!.uid
             viewModel.getUserProfile(profileUid!!)
-        }else{
+        } else {
             profileUid = navArgs.feedItem!!.publisherUid
             viewModel.getUserProfile(profileUid!!)
         }
-        viewModel.userProfile.observe(viewLifecycleOwner){
+        viewModel.userProfile.observe(viewLifecycleOwner) {
             user = it
             initProfile(user!!)
-            viewModel.getActivities(user!!)
+
             viewModel.isFriend(user!!)
         }
-        viewModel.isFriend.observe(viewLifecycleOwner){
-            if (it){
+        viewModel.isFriend.observe(viewLifecycleOwner) {
+            if (it) {
                 binding.apply {
                     ibAdd.isEnabled = false
                     recycler.visibility = View.VISIBLE
-                    recycler.adapter = adapter
-                    recycler.layoutManager = LinearLayoutManager(requireContext())
-                    recycler.addItemDecoration(NotificationItemDecoration())
                     tvPrivate.visibility = View.GONE
                 }
-
-            }else{
+                viewModel.getActivities(user!!)
+            } else {
                 Log.d(TAG, "onViewCreated: Not friend")
             }
         }
-        viewModel.contact.observe(viewLifecycleOwner){
+
+        viewModel.contact.observe(viewLifecycleOwner) {
             val action = ShowProfileFragmentDirections.actionShowProfileFragmentToChatFragment(it)
             findNavController().navigate(action)
         }
-        viewModel.activitiesState.observe(viewLifecycleOwner){ it ->
-            when(it){
+        viewModel.activitiesState.observe(viewLifecycleOwner) { it ->
+            when (it) {
                 is DataState.Loading -> {
+                    Log.d(TAG, "onViewCreated: loading")
                 }
                 DataState.Empty -> {
+                    Log.d(TAG, "onViewCreated: empty")
                 }
                 is DataState.Error -> {
                     Toast.makeText(requireContext(), "Error getting activities ! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                 }
                 is DataState.Success -> {
+                    Log.d(TAG, "onViewCreated: success")
                     adapter = ActivitiesAdapter(user!!)
+                    binding.apply {
+                        recycler.adapter = adapter
+                        recycler.layoutManager = LinearLayoutManager(requireContext())
+                        recycler.addItemDecoration(NotificationItemDecoration())
+                    }
                     adapter.submitList(it.data)
+
                 }
             }
         }
 
 
     }
-    private fun initProfile(user: UserProfile){
+
+    private fun initProfile(user: UserProfile) {
         binding.tvName.text = user.name
         binding.tvProfileHeader.text = user.email
         binding.tvFriendsCount.text = user.friendsCount
         binding.tvClassesCount.text = user.classesCount
         Picasso.get()
-            .load(user.imageUrl)
-            .fit().centerInside()
-            .into(binding.ivPp)
+                .load(user.imageUrl)
+                .fit().centerInside()
+                .into(binding.ivPp)
     }
 }

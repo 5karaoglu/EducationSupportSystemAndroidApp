@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:background="@drawable/border2">
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:id="@+id/tvClassName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:maxLines="1"
+        android:text="Class: Math"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/feedHeader"
@@ -15,12 +26,15 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="5dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvClassName"
         android:background="@drawable/border2">
 
         <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:id="@+id/ivUser"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -38,12 +52,12 @@
             android:layout_marginStart="10dp"
             android:maxLines="1"
             android:text="Fulgencio Joseph Prichett"
-            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/ivUser"
             app:layout_constraintStart_toEndOf="@+id/ivUser"
             app:layout_constraintTop_toTopOf="@+id/ivUser" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -52,41 +66,32 @@
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
         android:text="She's thunderstorms"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvClassName" />
-
-    <TextView
-        android:id="@+id/tvClassName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:maxLines="1"
-        android:text="Math Class"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feedHeader" />
+
 
     <TextView
         android:id="@+id/tvLastDeliveryTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Last Delivery Time: 25.04.2021 Monday"
+        android:layout_margin="5dp"
+        android:text="Deadline: 25.04.2021 Monday"
         android:textSize="12sp"
-        android:layout_marginStart="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAttachedFile" />
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:textColor="@color/black"
         android:text="She's thunderstorms
 Lying on her front, up against the wall
 She's thunderstorms
@@ -97,10 +102,11 @@ Cheating heartbeat, rapid fire
 She's thunderstorms
 Lying on her front, up against the wall
 She's thunderstorms"
-        app:layout_constraintTop_toBottomOf="@+id/tvLastDeliveryTime" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <Button
         android:visibility="gone"
+        android:textColor="@color/black"
         android:id="@+id/btnAttachedFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -115,19 +121,17 @@ She's thunderstorms"
         tools:layout_editor_absoluteX="5dp" />
 
 
-
-
     <ImageButton
         android:id="@+id/ibPublish"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_outline_publish_24"
-        android:tint="@color/black"
         android:scaleType="fitCenter"
+        android:src="@drawable/ic_outline_file_upload_24"
+        android:tint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAttachedFile" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLastDeliveryTime" />
 
 
     <TextView
@@ -149,11 +153,11 @@ She's thunderstorms"
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_comment_24"
         android:scaleType="fitCenter"
+        android:src="@drawable/ic_outline_comment_24"
         android:tint="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvSubmits"
-        app:layout_constraintTop_toBottomOf="@+id/btnAttachedFile" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLastDeliveryTime" />
 
     <TextView
         android:id="@+id/tvComments"

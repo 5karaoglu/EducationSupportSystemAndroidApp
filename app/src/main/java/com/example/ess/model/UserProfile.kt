@@ -16,4 +16,4 @@ data class UserProfile(
         var imageUrl: String = "",
         var classesCount: String = "0",
         var friendsCount: String = "0"
-):Parcelable
+) : Parcelable

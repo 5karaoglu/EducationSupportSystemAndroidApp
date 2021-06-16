@@ -10,11 +10,11 @@ import com.example.ess.databinding.SearchSingleItemBinding
 import com.example.ess.model.User
 import com.squareup.picasso.Picasso
 
-class SearchAdapter(private val listener:OnItemClickListener): ListAdapter<User,SearchAdapter.SearchViewHolder>(SearchComparator()) {
-    
-    class SearchViewHolder(private val binding: SearchSingleItemBinding): RecyclerView.ViewHolder(binding.root){
+class SearchAdapter(private val listener: OnItemClickListener) : ListAdapter<User, SearchAdapter.SearchViewHolder>(SearchComparator()) {
 
-        fun bind(user: User,listener: OnItemClickListener){
+    class SearchViewHolder(private val binding: SearchSingleItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(user: User, listener: OnItemClickListener) {
             Log.d("SearchViewHolde", "bind: here ${user.name}")
             binding.tvUsername.text = user.name
             binding.tvEmail.text = user.email
@@ -23,22 +23,24 @@ class SearchAdapter(private val listener:OnItemClickListener): ListAdapter<User,
                     .fit().centerInside()
                     .into(binding.ivUser)
 
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 listener.onItemClicked(user)
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         Log.d("TAG", "onCreateViewHolder: its created")
-        val view = SearchSingleItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val view = SearchSingleItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SearchViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val currentNotification = getItem(position)
-        holder.bind(currentNotification,listener)
+        holder.bind(currentNotification, listener)
     }
-    class SearchComparator(): DiffUtil.ItemCallback<User>(){
+
+    class SearchComparator() : DiffUtil.ItemCallback<User>() {
         override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
             return false
         }
@@ -48,7 +50,8 @@ class SearchAdapter(private val listener:OnItemClickListener): ListAdapter<User,
         }
 
     }
-    interface OnItemClickListener{
+
+    interface OnItemClickListener {
         fun onItemClicked(user: User)
     }
 }

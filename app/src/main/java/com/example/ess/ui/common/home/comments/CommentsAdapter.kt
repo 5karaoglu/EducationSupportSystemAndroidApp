@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.bold
-import androidx.core.text.italic
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,13 +13,13 @@ import com.example.ess.model.Comment
 import com.example.ess.util.Functions
 import com.squareup.picasso.Picasso
 
-class CommentsAdapter (
+class CommentsAdapter(
         private val listener: OnItemClickListener
-): ListAdapter<Comment, CommentsAdapter.CommentsViewHolder>(CommentsComparator()) {
+) : ListAdapter<Comment, CommentsAdapter.CommentsViewHolder>(CommentsComparator()) {
 
 
-    class CommentsViewHolder(private val binding: CommentsSingleItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(comment: Comment, listener: OnItemClickListener){
+    class CommentsViewHolder(private val binding: CommentsSingleItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(comment: Comment, listener: OnItemClickListener) {
             Log.d("debug", "bind: binded")
             binding.tvText.text = SpannableStringBuilder()
                     .bold { append(comment.name) }
@@ -29,7 +28,7 @@ class CommentsAdapter (
             binding.tvTime.text = Functions.tsToDate(comment.timestamp)
             /*binding.tvSeeReplies.text = "See all ${comment.subCommentsCount} comments"*/
 
-            if (comment.imageUrl.isNotEmpty()){
+            if (comment.imageUrl.isNotEmpty()) {
                 Picasso.get()
                         .load(comment.imageUrl)
                         .fit().centerInside()
@@ -43,19 +42,18 @@ class CommentsAdapter (
     }
 
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentsViewHolder {
-        return CommentsViewHolder( CommentsSingleItemBinding.inflate(LayoutInflater.from(parent.context),
-                parent,false))
+        return CommentsViewHolder(CommentsSingleItemBinding.inflate(LayoutInflater.from(parent.context),
+                parent, false))
     }
-
 
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
         val currentCommentsItem = getItem(position)
-        holder.bind(currentCommentsItem,listener)
+        holder.bind(currentCommentsItem, listener)
     }
-    class CommentsComparator(): DiffUtil.ItemCallback<Comment>(){
+
+    class CommentsComparator() : DiffUtil.ItemCallback<Comment>() {
         override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
             return oldItem === newItem
         }
@@ -65,7 +63,8 @@ class CommentsAdapter (
         }
 
     }
-    interface OnItemClickListener{
+
+    interface OnItemClickListener {
         fun onTvClicked(comment: Comment)
 
     }

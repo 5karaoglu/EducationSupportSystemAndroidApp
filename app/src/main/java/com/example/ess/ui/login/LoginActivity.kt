@@ -1,21 +1,13 @@
 package com.example.ess.ui.login
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.example.ess.R
+import androidx.appcompat.app.AppCompatActivity
 import com.example.ess.databinding.ActivityLoginBinding
 import com.example.ess.ui.admin.AdminActivity
-import com.example.ess.ui.admin.AdminRepository
 import com.example.ess.ui.student.StudentActivity
 import com.example.ess.ui.teacher.TeacherActivity
 import com.example.ess.util.DataState
@@ -26,7 +18,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val TAG = "Login Activity"
     private val viewModel: LoginViewModel by viewModels()
-    private lateinit var binding : ActivityLoginBinding
+    private lateinit var binding: ActivityLoginBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
                         buttonLogin.isEnabled = true
                     }
                     viewModel.subscribeChannels()
-                    when(it.data){
+                    when (it.data) {
                         "Student" -> {
                             val intent = Intent(this, StudentActivity::class.java)
                             startActivity(intent)
@@ -78,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
         })
         binding.apply {
             buttonLogin.setOnClickListener {
-                viewModel.signIn(etUsername.text.toString(),etPassword.text.toString())
+                viewModel.signIn(etUsername.text.toString(), etPassword.text.toString())
             }
         }
     }

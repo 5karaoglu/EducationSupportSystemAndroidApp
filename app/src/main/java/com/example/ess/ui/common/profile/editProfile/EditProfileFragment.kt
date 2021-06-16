@@ -3,13 +3,13 @@ package com.example.ess.ui.common.profile.editProfile
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.databinding.FragmentEditProfileBinding
@@ -24,26 +24,27 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class EditProfileFragment : Fragment() {
 
     private val TAG = "TeacherEditProfileFragment"
-    private var _binding : FragmentEditProfileBinding? = null
+    private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TeacherViewModel by viewModels()
     private var uri: Uri? = null
     private var user: User? = null
-    private lateinit var gallery : ActivityResultLauncher<String>
+    private lateinit var gallery: ActivityResultLauncher<String>
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gallery = registerForActivityResult(ActivityResultContracts.GetContent()){
+        gallery = registerForActivityResult(ActivityResultContracts.GetContent()) {
             viewModel.uploadPhoto(it)
             Picasso.get().load(it).centerInside().fit().into(binding.ivPp)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentEditProfileBinding.inflate(inflater,container,false)
+        _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -58,16 +59,16 @@ class EditProfileFragment : Fragment() {
         binding.tvChangePhoto.setOnClickListener {
             gallery.launch("image/*")
         }
-        viewModel.updateState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.updateState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
                 }
                 is DataState.Error -> {
                     Toast.makeText(
-                        requireContext(),
-                        "Error! {${it.throwable.message}}",
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            "Error! {${it.throwable.message}}",
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
                 is DataState.Success -> {
@@ -78,18 +79,18 @@ class EditProfileFragment : Fragment() {
         }
         binding.ibUpdate.setOnClickListener {
             uri = viewModel.uri.value
-            if (uri != null){
+            if (uri != null) {
                 val user = User(
-                    name = binding.etName.text.toString(),
-                    email = binding.etUsername.text.toString(),
-                    imageUrl = uri.toString()
+                        name = binding.etName.text.toString(),
+                        email = binding.etUsername.text.toString(),
+                        imageUrl = uri.toString()
                 )
                 viewModel.updateUser(user)
-            }else{
+            } else {
                 Toast.makeText(
-                    requireContext(),
-                    "Process not successful. Try again !",
-                    Toast.LENGTH_SHORT
+                        requireContext(),
+                        "Process not successful. Try again !",
+                        Toast.LENGTH_SHORT
                 ).show()
             }
 
@@ -97,8 +98,9 @@ class EditProfileFragment : Fragment() {
 
 
     }
-    private fun getUserInfo(){
-        viewModel.currentUser.observe(viewLifecycleOwner){
+
+    private fun getUserInfo() {
+        viewModel.currentUser.observe(viewLifecycleOwner) {
             Log.d(TAG, "onViewCreated: ${it.imageUrl}")
             user = it
             Picasso.get()

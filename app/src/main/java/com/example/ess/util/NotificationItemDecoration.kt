@@ -4,7 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class NotificationItemDecoration() : RecyclerView.ItemDecoration(){
+class NotificationItemDecoration() : RecyclerView.ItemDecoration() {
     val space = 20
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         super.getItemOffsets(outRect, view, parent, state)
@@ -12,7 +12,7 @@ class NotificationItemDecoration() : RecyclerView.ItemDecoration(){
         outRect.right = space
         outRect.bottom = space
 
-        if (parent.getChildLayoutPosition(view) == 0){
+        if (parent.getChildLayoutPosition(view) == 0) {
             outRect.top = space
         }
     }

@@ -2,10 +2,12 @@ package com.example.ess.model
 
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.PropertyName
+
 @IgnoreExtraProperties
 data class Comments(
-        var comments: HashMap<String,Comment> = hashMapOf()
+        var comments: HashMap<String, Comment> = hashMapOf()
 )
+
 @IgnoreExtraProperties
 data class Comment(
         val path: String = "",
@@ -21,6 +23,7 @@ data class Comment(
         var subComments:HashMap<String,SubComments> = hashMapOf(),
         var subCommentsCount: String = ""*/
 )
+
 data class SubComments(
         val comment: String = "",
         @get:PropertyName("image_url")

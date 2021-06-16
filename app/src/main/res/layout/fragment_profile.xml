@@ -13,6 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -26,18 +27,21 @@
                 android:maxLines="1"
                 android:padding="5dp"
                 android:text="@string/profile"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ibRequests"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <ImageButton
                 android:id="@+id/ibEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:padding="10dp"
+                android:tint="@color/black"
                 android:src="@drawable/ic_baseline_edit_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -49,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:padding="10dp"
+                android:tint="@color/black"
                 android:src="@drawable/ic_baseline_person_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ibEdit"
@@ -178,6 +183,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="-2dp">
+
         <TextView
             android:id="@+id/tvActivities"
             android:layout_width="match_parent"
@@ -187,7 +193,7 @@
             android:padding="10dp"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:background="@drawable/border2"/>
+            android:background="@drawable/border2" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
@@ -195,7 +201,7 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             tools:listitem="@layout/activities_single_item"
-            android:layout_below="@+id/tvActivities"/>
+            android:layout_below="@+id/tvActivities" />
 
         <ProgressBar
             android:id="@+id/pb"
@@ -203,7 +209,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone"
-            android:layout_below="@+id/tvActivities"/>
+            android:layout_below="@+id/tvActivities" />
 
         <TextView
             android:id="@+id/tvEmpty"

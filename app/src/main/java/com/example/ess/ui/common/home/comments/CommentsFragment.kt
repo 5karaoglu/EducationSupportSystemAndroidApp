@@ -2,11 +2,11 @@ package com.example.ess.ui.common.home.comments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,7 +15,6 @@ import com.example.ess.R
 import com.example.ess.databinding.FragmentCommentsBinding
 import com.example.ess.model.Comment
 import com.example.ess.ui.common.CommonViewModel
-import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,7 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class CommentsFragment : Fragment(),
-    CommentsAdapter.OnItemClickListener {
+        CommentsAdapter.OnItemClickListener {
 
     private val TAG = "CommentsFragment"
     private var _binding: FragmentCommentsBinding? = null
@@ -33,13 +32,13 @@ class CommentsFragment : Fragment(),
     private val args: CommentsFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommentsBinding.inflate(inflater,container,false)
+        _binding = FragmentCommentsBinding.inflate(inflater, container, false)
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.GONE
@@ -49,7 +48,7 @@ class CommentsFragment : Fragment(),
     override fun onDestroyView() {
         super.onDestroyView()
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.GONE
@@ -67,14 +66,14 @@ class CommentsFragment : Fragment(),
             findNavController().popBackStack()
         }
         binding.buttonComment.setOnClickListener {
-            if (binding.etAddComment.text.isNotEmpty()){
-                viewModel.addComment(args.feedItem!!,binding.etAddComment.text.toString())
+            if (binding.etAddComment.text.isNotEmpty()) {
+                viewModel.addComment(args.feedItem!!, binding.etAddComment.text.toString())
                 binding.etAddComment.text.clear()
             }
         }
         viewModel.getComments(args.feedItem!!)
-        viewModel.commentsState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.commentsState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
                 }
@@ -87,7 +86,6 @@ class CommentsFragment : Fragment(),
             }
         }
     }
-
 
 
     override fun onTvClicked(comment: Comment) {

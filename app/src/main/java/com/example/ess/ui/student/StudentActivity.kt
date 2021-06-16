@@ -1,7 +1,7 @@
 package com.example.ess.ui.student
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.ess.EssApplication
@@ -15,10 +15,10 @@ class StudentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student)
         bottomNavInit()
-        (application as EssApplication).userType = "Teacher"
+        (application as EssApplication).userType = "Student"
     }
 
-    private fun bottomNavInit(){
+    private fun bottomNavInit() {
         val bottomNavView = findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentStudent) as NavHostFragment
         val navController = navHostFragment.navController

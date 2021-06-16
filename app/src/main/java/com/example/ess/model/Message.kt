@@ -5,9 +5,10 @@ data class Message(
         var message: String,
         var whoSent: String
 )
-class MessageMapper{
-    companion object{
-        fun modelToMap(message: Message):Map<String,Any>{
+
+class MessageMapper {
+    companion object {
+        fun modelToMap(message: Message): Map<String, Any> {
             return mapOf(
                     "timestamp" to message.timestamp,
                     "message" to message.message,
@@ -15,7 +16,7 @@ class MessageMapper{
             )
         }
 
-        fun mapToModel(map: HashMap<String,*>): Message{
+        fun mapToModel(map: HashMap<String, *>): Message {
             return Message(
                     timestamp = map["timestamp"] as String,
                     message = map["message"] as String,

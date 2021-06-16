@@ -1,33 +1,31 @@
 package com.example.ess.ui.teacher.add
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
-import androidx.core.view.get
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
 import com.example.ess.databinding.FragmentTeacherAddBinding
-import com.example.ess.model.IssueShort
 import com.example.ess.ui.teacher.TeacherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TeacherAddFragment : Fragment() {
 
-    private val viewModel : TeacherViewModel by viewModels()
-    private var _binding : FragmentTeacherAddBinding? = null
+    private val viewModel: TeacherViewModel by viewModels()
+    private var _binding: FragmentTeacherAddBinding? = null
     private val binding get() = _binding!!
     private var selectedIssue: String? = null
     private var selectedClass: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentTeacherAddBinding.inflate(inflater,container,false)
+        _binding = FragmentTeacherAddBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,44 +38,44 @@ class TeacherAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnCreateIssue.setOnClickListener {
-                findNavController().navigate(R.id.action_teacherAddFragment_to_teacherCreateIssueFragment,
-                        bundleOf(Pair("selectedClass",selectedClass)))
+            findNavController().navigate(R.id.action_teacherAddFragment_to_teacherCreateIssueFragment,
+                    bundleOf(Pair("selectedClass", selectedClass)))
         }
         binding.btnShowSubmits.setOnClickListener {
-            viewModel.getIssue(selectedClass!!,selectedIssue!!)
-            viewModel.issue.observe(viewLifecycleOwner){
+            viewModel.getIssue(selectedClass!!, selectedIssue!!)
+            viewModel.issue.observe(viewLifecycleOwner) {
                 val action = TeacherAddFragmentDirections.actionTeacherAddFragmentToSubmitsFragment(it)
                 findNavController().navigate(action)
             }
         }
         binding.btnShowComments.setOnClickListener {
-            viewModel.getIssue(selectedClass!!,selectedIssue!!)
-            viewModel.issue.observe(viewLifecycleOwner){
+            viewModel.getIssue(selectedClass!!, selectedIssue!!)
+            viewModel.issue.observe(viewLifecycleOwner) {
                 val action = TeacherAddFragmentDirections.actionTeacherAddFragmentToCommentsFragment(it)
                 findNavController().navigate(action)
             }
         }
         binding.btnEditIssue.setOnClickListener {
             findNavController().navigate(R.id.action_teacherAddFragment_to_teacherEditTitleFragment,
-                bundleOf(Pair("selectedIssue",selectedIssue),
-                Pair("selectedClass",selectedClass)
-                ))
+                    bundleOf(Pair("selectedIssue", selectedIssue),
+                            Pair("selectedClass", selectedClass)
+                    ))
         }
-        var adapter : ArrayAdapter<String>
+        var adapter: ArrayAdapter<String>
         var adapter2: ArrayAdapter<String>
-        viewModel.classList.observe(viewLifecycleOwner){
-            adapter = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_item,it)
+        viewModel.classList.observe(viewLifecycleOwner) {
+            adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, it)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerClasses.adapter = adapter
             binding.pb.visibility = View.GONE
         }
         viewModel.getClassList()
-        binding.spinnerClasses.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.spinnerClasses.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
             ) {
                 selectedClass = binding.spinnerClasses.selectedItem.toString()
                 viewModel.getIssueList(selectedClass!!)
@@ -85,24 +83,25 @@ class TeacherAddFragment : Fragment() {
                 binding.btnCreateIssue.isEnabled = true
 
             }
+
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-        viewModel.issueList.observe(viewLifecycleOwner){
-            adapter2 = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_item,it)
+        viewModel.issueList.observe(viewLifecycleOwner) {
+            adapter2 = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, it)
             adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerIssues.adapter = adapter2
             binding.pb.visibility = View.GONE
         }
-        binding.spinnerIssues.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.spinnerIssues.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
             ) {
-                if (binding.spinnerIssues.selectedItem != null){
-                   selectedIssue = binding.spinnerIssues.selectedItem.toString()
+                if (binding.spinnerIssues.selectedItem != null) {
+                    selectedIssue = binding.spinnerIssues.selectedItem.toString()
                 }
                 binding.btnShowSubmits.isEnabled = true
                 binding.btnShowComments.isEnabled = true

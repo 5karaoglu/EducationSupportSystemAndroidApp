@@ -2,11 +2,11 @@ package com.example.ess.ui.common.messages
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -21,7 +21,6 @@ import com.example.ess.util.NotificationItemDecoration
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_teacher.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
@@ -32,20 +31,20 @@ class ChatFragment : Fragment(), ChatAdapter.OnItemClickListener {
     private val binding get() = _binding!!
     private val viewModel: CommonViewModel by viewModels()
     private val args: ChatFragmentArgs by navArgs()
-    private var myUid:String? = null
-    private var receiverUid:String? = null
-    private var chatId:String? = null
+    private var myUid: String? = null
+    private var receiverUid: String? = null
+    private var chatId: String? = null
     private val messageList = mutableListOf<Message>()
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentChatBinding.inflate(inflater,container,false)
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.GONE
@@ -55,7 +54,7 @@ class ChatFragment : Fragment(), ChatAdapter.OnItemClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.VISIBLE
@@ -67,39 +66,40 @@ class ChatFragment : Fragment(), ChatAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         initProfile(args.contact)
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack(R.id.showProfileFragment,false)
+            findNavController().popBackStack()
         }
         binding.ibSend.setOnClickListener {
-            viewModel.sendMessage(args.contact.chatId,binding.etMessage.text.toString())
+            viewModel.sendMessage(args.contact.chatId, binding.etMessage.text.toString())
             binding.etMessage.text.clear()
         }
-        val adapter = ChatAdapter(args.contact.myUid, args.contact.receiverUid,this)
+        val adapter = ChatAdapter(args.contact.myUid, args.contact.receiverUid, this)
         binding.recyclerMessages.adapter = adapter
         binding.recyclerMessages.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerMessages.addItemDecoration(NotificationItemDecoration())
 
         viewModel.getMessages(args.contact.chatId)
 
-        viewModel.messagesState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.messagesState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     Log.d(TAG, "onViewCreated: Loading")
                     binding.pb.visibility = View.VISIBLE
                 }
                 is DataState.Error -> Toast.makeText(requireContext(), "Error ! ${it.throwable.message}", Toast.LENGTH_SHORT)
-                    .show()
+                        .show()
                 is DataState.Success -> {
                     binding.pb.visibility = View.GONE
                     adapter.submitList(it.data)
                     binding.recyclerMessages.smoothScrollToPosition(
-                        it.data.size-1
+                            it.data.size - 1
                     )
                     /*viewModel.updateLastMessage(args.contact, it.data[it.data.size-1])*/
                 }
             }
         }
     }
-    private fun initProfile(contact: Contact){
+
+    private fun initProfile(contact: Contact) {
         Picasso.get()
                 .load(contact.imageUrl)
                 .fit().centerInside()

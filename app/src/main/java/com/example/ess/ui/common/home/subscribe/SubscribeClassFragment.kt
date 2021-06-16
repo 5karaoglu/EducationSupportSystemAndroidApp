@@ -22,13 +22,14 @@ class SubscribeClassFragment : Fragment() {
     private val viewModel: CommonViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSubscribeClassBinding.inflate(inflater,container,false)
+        _binding = FragmentSubscribeClassBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -37,24 +38,26 @@ class SubscribeClassFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getClassList()
-        viewModel.classesState.observe(viewLifecycleOwner){
-            when(it){
-                is DataState.Loading ->  {binding.pb.visibility = View.VISIBLE}
+        viewModel.classesState.observe(viewLifecycleOwner) {
+            when (it) {
+                is DataState.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
                 is DataState.Error -> {
                     binding.pb.visibility = View.GONE
                     Toast.makeText(
-                        requireContext(),
-                        "Error! ${it.throwable.message}",
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            "Error! ${it.throwable.message}",
+                            Toast.LENGTH_SHORT
                     )
-                        .show()
+                            .show()
                 }
                 is DataState.Success -> {
                     binding.pb.visibility = View.GONE
                     val adapter = ArrayAdapter<String>(
-                        requireContext(),
-                        android.R.layout.simple_spinner_item,
-                        it.data
+                            requireContext(),
+                            android.R.layout.simple_spinner_item,
+                            it.data
                     )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinnerTeacherChannels.adapter = adapter
@@ -75,17 +78,17 @@ class SubscribeClassFragment : Fragment() {
                 is DataState.Error -> {
                     binding.pb.visibility = View.GONE
                     Toast.makeText(
-                        requireContext(),
-                        "Error! ${it.throwable.message}",
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            "Error! ${it.throwable.message}",
+                            Toast.LENGTH_SHORT
                     )
-                        .show()
+                            .show()
                 }
                 is DataState.Success -> {
                     binding.pb.visibility = View.GONE
                     Toast.makeText(
-                        requireContext(),
-                        "${it.data} successfully added!", Toast.LENGTH_SHORT
+                            requireContext(),
+                            "${it.data} successfully added!", Toast.LENGTH_SHORT
                     ).show()
                     findNavController().popBackStack()
                 }

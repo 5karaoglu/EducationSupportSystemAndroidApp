@@ -9,7 +9,7 @@
         android:id="@+id/adminFragment"
         android:name="com.example.ess.ui.admin.AdminFragment"
         android:label="fragment_admin"
-        tools:layout="@layout/fragment_admin" >
+        tools:layout="@layout/fragment_admin">
         <action
             android:id="@+id/action_adminFragment_to_addUserFragment"
             app:destination="@id/addUserFragment" />
@@ -24,7 +24,7 @@
         android:id="@+id/adminNotificationsFragment"
         android:name="com.example.ess.ui.admin.AdminNotificationsFragment"
         android:label="fragment_admin_notifications"
-        tools:layout="@layout/fragment_admin_notifications" >
+        tools:layout="@layout/fragment_admin_notifications">
         <action
             android:id="@+id/action_adminNotificationsFragment_to_addUserFragment"
             app:destination="@id/addUserFragment" />
@@ -36,7 +36,7 @@
         android:id="@+id/addUserFragment"
         android:name="com.example.ess.ui.admin.AddUserFragment"
         android:label="fragment_add_user"
-        tools:layout="@layout/fragment_add_user" >
+        tools:layout="@layout/fragment_add_user">
         <action
             android:id="@+id/action_addUserFragment_to_adminNotificationsFragment"
             app:destination="@id/adminNotificationsFragment" />

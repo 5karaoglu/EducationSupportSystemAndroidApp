@@ -2,18 +2,16 @@ package com.example.ess.ui.admin
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
 import com.example.ess.databinding.FragmentAddUserBinding
-import com.example.ess.databinding.FragmentAdminNotificationsBinding
 import com.example.ess.util.DataState
-import com.example.ess.util.Functions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +23,7 @@ class AddUserFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentAddUserBinding.inflate(inflater,container,false)
+        _binding = FragmentAddUserBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,13 +38,13 @@ class AddUserFragment : Fragment() {
         binding.apply {
             buttonLogin.setOnClickListener {
 
-                if (!etUsername.text.isNullOrEmpty() && !etPassword.text.isNullOrEmpty()){
+                if (!etUsername.text.isNullOrEmpty() && !etPassword.text.isNullOrEmpty()) {
 
                     val email = etUsername.text.toString()
                     val password = etPassword.text.toString()
                     val userType = getUserType(radioGroup.checkedRadioButtonId)
 
-                    viewModel.signUp(email,password,userType)
+                    viewModel.signUp(email, password, userType)
 
                 }
 
@@ -80,8 +78,9 @@ class AddUserFragment : Fragment() {
 
 
     }
-    private fun getUserType(type: Int):String {
-        return when(type){
+
+    private fun getUserType(type: Int): String {
+        return when (type) {
             binding.rbStudent.id -> "Student"
             binding.rbTeacher.id -> "Teacher"
             binding.rbAdmin.id -> "Admin"

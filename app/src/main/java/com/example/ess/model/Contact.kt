@@ -22,10 +22,11 @@ data class Contact(
         @get:PropertyName("receiver_uid")
         @set:PropertyName("receiver_uid")
         var receiverUid: String = ""
-):Parcelable
-class ContactMapper{
-    companion object{
-        fun modelToMap(contact: Contact):Map<String,Any>{
+) : Parcelable
+
+class ContactMapper {
+    companion object {
+        fun modelToMap(contact: Contact): Map<String, Any> {
             return mapOf(
                     "name" to contact.name,
                     "image_url" to contact.imageUrl,
@@ -36,7 +37,7 @@ class ContactMapper{
             )
         }
 
-        fun mapToModel(map: HashMap<String,*>): Contact{
+        fun mapToModel(map: HashMap<String, *>): Contact {
             return Contact(
                     name = map["name"] as String,
                     imageUrl = map["image_url"] as String,

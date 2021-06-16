@@ -1,13 +1,12 @@
 package com.example.ess.ui.common.home.submits
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,7 +16,6 @@ import com.example.ess.R
 import com.example.ess.databinding.FragmentSubmitsBinding
 import com.example.ess.model.Submit
 import com.example.ess.ui.common.CommonViewModel
-import com.example.ess.ui.teacher.TeacherViewModel
 import com.example.ess.util.DataState
 import com.example.ess.util.NotificationItemDecoration
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,13 +31,13 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
     private val args: SubmitsFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSubmitsBinding.inflate(inflater,container,false)
+        _binding = FragmentSubmitsBinding.inflate(inflater, container, false)
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.GONE
@@ -49,7 +47,7 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.VISIBLE
@@ -68,17 +66,18 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
             findNavController().popBackStack()
         }
         args.feedItem?.let { viewModel.getSubmissions(it) }
-        viewModel.submitsState.observe(viewLifecycleOwner){
-            when(it){
-                is DataState.Loading -> {}
+        viewModel.submitsState.observe(viewLifecycleOwner) {
+            when (it) {
+                is DataState.Loading -> {
+                }
                 is DataState.Error -> Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                 is DataState.Success -> adapter.submitList(it.data).also {
                     Log.d("TAG", "onViewCreated: success")
                 }
             }
         }
-        viewModel.downloadState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.downloadState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     binding.pb.visibility = View.VISIBLE
                 }
@@ -94,7 +93,7 @@ class SubmitsFragment : Fragment(), SubmitsAdapter.OnItemClickListener {
 
     @ExperimentalCoroutinesApi
     override fun onViewClicked(submit: Submit) {
-        if ((requireActivity().application as EssApplication).userType == "Teacher" ){
+        if ((requireActivity().application as EssApplication).userType == "Teacher") {
             viewModel.downloadFile(submit)
         }
     }

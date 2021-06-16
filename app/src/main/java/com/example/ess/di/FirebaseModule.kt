@@ -43,11 +43,11 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(): NotificationApi{
+    fun provideRetrofit(): NotificationApi {
         return Retrofit.Builder()
-            .baseUrl("https://fcm.googleapis.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(NotificationApi::class.java)
+                .baseUrl("https://fcm.googleapis.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(NotificationApi::class.java)
     }
 }

@@ -1,8 +1,6 @@
 package com.example.ess.model
 
 import com.google.firebase.database.PropertyName
-import java.io.FileDescriptor
-import java.sql.Timestamp
 
 data class Notification(
         var name: String = "",

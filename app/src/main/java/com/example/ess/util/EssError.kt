@@ -1,3 +1,3 @@
 package com.example.ess.util
 
-class EssError(message: String, cause: Throwable): Throwable(message,cause)
+class EssError(message: String, cause: Throwable) : Throwable(message, cause)

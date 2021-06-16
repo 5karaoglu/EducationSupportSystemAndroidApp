@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border2">
@@ -11,8 +9,7 @@
         android:id="@+id/iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_margin="5dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,8 +19,8 @@
         android:id="@+id/tvText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:padding="5dp"
         android:text="Fulgencio submitted prichetts.pdf to HW5"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,32 +38,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvText" />
 
-  <!--  <TextView
-        android:id="@+id/tvReply"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:padding="5dp"
-        android:text="Reply"
-        android:textColor="@color/link_blue"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvSeeReplies" />
+    <!--  <TextView
+          android:id="@+id/tvReply"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="20dp"
+          android:padding="5dp"
+          android:text="Reply"
+          android:textColor="@color/link_blue"
+          android:textSize="12sp"
+          android:textStyle="bold"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/tvSeeReplies" />
 
-    <TextView
-        android:id="@+id/tvSeeReplies"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="20dp"
-        android:padding="5dp"
-        android:text="See 10 replies"
-        android:textColor="@color/link_blue"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/tvReply"
-        app:layout_constraintTop_toBottomOf="@+id/tvComment" />-->
+      <TextView
+          android:id="@+id/tvSeeReplies"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="5dp"
+          android:layout_marginEnd="20dp"
+          android:padding="5dp"
+          android:text="See 10 replies"
+          android:textColor="@color/link_blue"
+          android:textSize="12sp"
+          android:textStyle="bold"
+          app:layout_constraintEnd_toStartOf="@+id/tvReply"
+          app:layout_constraintTop_toBottomOf="@+id/tvComment" />-->
 
     <!--<LinearLayout
         android:visibility="gone"

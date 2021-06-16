@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ess.R
@@ -26,12 +26,12 @@ import java.util.*
 
 @AndroidEntryPoint
 class TeacherCreateIssueFragment : Fragment(),
-    DatePickerDialog.OnDateSetListener,
-    TimePickerDialog.OnTimeSetListener{
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
 
     private val TAG = "TeacherCreateIssueFragment"
-    private val viewModel : TeacherViewModel by viewModels()
-    private var _binding : FragmentTeacherEditTitleBinding? = null
+    private val viewModel: TeacherViewModel by viewModels()
+    private var _binding: FragmentTeacherEditTitleBinding? = null
     private val binding get() = _binding!!
     private var selectedClass: String? = null
     val c = Calendar.getInstance()
@@ -40,13 +40,13 @@ class TeacherCreateIssueFragment : Fragment(),
     var day = c.get(Calendar.DAY_OF_MONTH)
     var hour = c.get(Calendar.HOUR_OF_DAY)
     var minute = c.get(Calendar.MINUTE)
-    private var deadline : String? = null
-    private lateinit var files : ActivityResultLauncher<String>
-    private var fileName : String? = null
-    private var downloadUrl : String? = null
+    private var deadline: String? = null
+    private lateinit var files: ActivityResultLauncher<String>
+    private var fileName: String? = null
+    private var downloadUrl: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentTeacherEditTitleBinding.inflate(inflater,container,false)
+        _binding = FragmentTeacherEditTitleBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,14 +58,14 @@ class TeacherCreateIssueFragment : Fragment(),
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        files = registerForActivityResult(ActivityResultContracts.GetContent()){
-            if (!binding.etTitle.text.isNullOrEmpty()){
-                viewModel.uploadFile(it,selectedClass!!,binding.etTitle.text.toString(),it.lastPathSegment!!)
+        files = registerForActivityResult(ActivityResultContracts.GetContent()) {
+            if (!binding.etTitle.text.isNullOrEmpty()) {
+                viewModel.uploadFile(it, selectedClass!!, binding.etTitle.text.toString(), it.lastPathSegment!!)
                 fileName = it.lastPathSegment
                 binding.tvFileName.text = fileName
-            }else{
+            } else {
                 Toast.makeText(requireContext(), "Error! Title cant be empty.", Toast.LENGTH_SHORT)
-                    .show()
+                        .show()
             }
         }
     }
@@ -77,23 +77,25 @@ class TeacherCreateIssueFragment : Fragment(),
             chooseFile()
         }
         binding.tvDeadlineChange.setOnClickListener {
-            DatePickerDialog(requireContext(),this,year,month,day).show()
+            DatePickerDialog(requireContext(), this, year, month, day).show()
         }
 
         binding.ibUpdate.setOnClickListener {
             if (!binding.etTitle.text.isNullOrEmpty() && !binding.etDes.text.isNullOrEmpty() &&
-                    !deadline.isNullOrEmpty() && !selectedClass.isNullOrEmpty()){
-                viewModel.createIssue(selectedClass!!,binding.etTitle.text.toString(),
-                        binding.etDes.text.toString(),deadline!!,fileName, downloadUrl)
-            }else{
+                    !deadline.isNullOrEmpty() && !selectedClass.isNullOrEmpty()) {
+                viewModel.createIssue(selectedClass!!, binding.etTitle.text.toString(),
+                        binding.etDes.text.toString(), deadline!!, fileName, downloadUrl)
+            } else {
                 Toast.makeText(requireContext(), "You have to fill all fields!", Toast.LENGTH_SHORT)
-                    .show()
+                        .show()
             }
 
         }
-        viewModel.issueUpdateState.observe(viewLifecycleOwner){
-            when(it){
-                is DataState.Loading -> {binding.pb.visibility = View.VISIBLE}
+        viewModel.issueUpdateState.observe(viewLifecycleOwner) {
+            when (it) {
+                is DataState.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
                 is DataState.Error -> Toast.makeText(requireContext(), "Error! ${it.throwable.message}", Toast.LENGTH_SHORT).show()
                 is DataState.Success -> {
                     Toast.makeText(requireContext(), it.data, Toast.LENGTH_SHORT).show()
@@ -102,8 +104,8 @@ class TeacherCreateIssueFragment : Fragment(),
                 }
             }
         }
-        viewModel.fileUploadState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.fileUploadState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
                 }
@@ -123,7 +125,7 @@ class TeacherCreateIssueFragment : Fragment(),
         }
     }
 
-    private fun chooseFile(){
+    private fun chooseFile() {
         files.launch("application/pdf")
     }
 
@@ -131,13 +133,13 @@ class TeacherCreateIssueFragment : Fragment(),
         this.year = year
         this.month = month
         this.day = dayOfMonth
-        TimePickerDialog(requireContext(),this,hour,minute,true).show()
+        TimePickerDialog(requireContext(), this, hour, minute, true).show()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         this.hour = hourOfDay
         this.minute = minute
-        val cal = GregorianCalendar(this.year,this.month,this.day,this.hour,this.minute)
+        val cal = GregorianCalendar(this.year, this.month, this.day, this.hour, this.minute)
         deadline = cal.timeInMillis.toString()
         binding.tvDate.text = Functions.tsToDate(deadline!!)
     }

@@ -1,11 +1,11 @@
 package com.example.ess.ui.common.search
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,19 +17,19 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(),
-SearchAdapter.OnItemClickListener{
+        SearchAdapter.OnItemClickListener {
 
-    private var _binding : FragmentSearchBinding? = null
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommonViewModel by viewModels()
     private val TAG = "Search Fragment"
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSearchBinding.inflate(inflater,container,false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -49,8 +49,8 @@ SearchAdapter.OnItemClickListener{
             viewModel.getUsers(binding.etSearch.text.toString())
         }
 
-        viewModel.userState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.userState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> binding.apply {
                     recyclerSearch.visibility = View.GONE
                     tvEmpty.visibility = View.GONE
@@ -82,7 +82,7 @@ SearchAdapter.OnItemClickListener{
     }
 
     override fun onItemClicked(user: User) {
-        val action = SearchFragmentDirections.actionSearchFragmentToShowProfileFragment(user,null)
+        val action = SearchFragmentDirections.actionSearchFragmentToShowProfileFragment(user, null)
         findNavController().navigate(action)
     }
 }

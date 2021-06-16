@@ -2,11 +2,11 @@ package com.example.ess.ui.common.home
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,24 +14,22 @@ import com.example.ess.R
 import com.example.ess.databinding.FragmentHomeBinding
 import com.example.ess.model.FeedItem
 import com.example.ess.model.User
-import com.example.ess.model.UserShort
 import com.example.ess.ui.common.CommonViewModel
 import com.example.ess.util.DataState
-import com.example.ess.util.NotificationItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(),
-FeedAdapter.OnItemClickListener{
+        FeedAdapter.OnItemClickListener {
 
 
     private val TAG = "HomeFragment"
-    private val viewModel : CommonViewModel by viewModels()
-    private var _binding : FragmentHomeBinding? = null
+    private val viewModel: CommonViewModel by viewModels()
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentHomeBinding.inflate(inflater,container,false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -55,8 +53,8 @@ FeedAdapter.OnItemClickListener{
         binding.recyclerTeacherNotifications.addItemDecoration(FeedItemDecoration())
 
         viewModel.getFeed()
-        viewModel.feedState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.feedState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
                 }
@@ -81,8 +79,8 @@ FeedAdapter.OnItemClickListener{
     }
 
     override fun onIvClicked(feedItem: FeedItem) {
-        val user = User(feedItem.publisherUid,feedItem.publishedBy,"",feedItem.publisherImageUrl)
-        val action = HomeFragmentDirections.actionHomeFragmentToShowProfileFragment(user,null)
+        val user = User(feedItem.publisherUid, feedItem.publishedBy, "", feedItem.publisherImageUrl)
+        val action = HomeFragmentDirections.actionHomeFragmentToShowProfileFragment(user, null)
         findNavController().navigate(action)
     }
 }

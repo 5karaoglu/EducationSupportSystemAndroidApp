@@ -1,11 +1,11 @@
 package com.example.ess.ui.common.messages
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,18 +21,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MessagesFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
-    private var _binding : FragmentMessagesBinding? = null
+    private var _binding: FragmentMessagesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommonViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMessagesBinding.inflate(inflater,container,false)
+        _binding = FragmentMessagesBinding.inflate(inflater, container, false)
         var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-        if (bottomBar == null){
+        if (bottomBar == null) {
             bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
         }
         bottomBar.visibility = View.GONE
@@ -52,15 +52,15 @@ class MessagesFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         binding.recyclerMessages.addItemDecoration(NotificationItemDecoration())
         binding.btnBack.setOnClickListener {
             var bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavTeacher)
-            if (bottomBar == null){
+            if (bottomBar == null) {
                 bottomBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavStudent)
             }
             bottomBar.visibility = View.VISIBLE
             findNavController().popBackStack()
         }
 
-        viewModel.contactState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.contactState.observe(viewLifecycleOwner) {
+            when (it) {
                 is DataState.Loading -> binding.pb.visibility = View.VISIBLE
                 is DataState.Error -> {
                     binding.pb.visibility = View.GONE

@@ -8,7 +8,7 @@ data class IssueShort(
         val path: String = "",
         @get:PropertyName("class_name")
         @set:PropertyName("class_name")
-        var className:String = "",
+        var className: String = "",
         val title: String = "",
         val description: String = "",
         val deadline: String = "",
@@ -22,9 +22,10 @@ data class IssueShort(
         @set:PropertyName("download_url")
         var downloadUrl: String? = null
 )
-class IssueShortMapper{
-    companion object{
-        fun mapToModel(map: HashMap<String,*>): IssueShort{
+
+class IssueShortMapper {
+    companion object {
+        fun mapToModel(map: HashMap<String, *>): IssueShort {
             return IssueShort(
                     title = map["title"] as String,
                     description = map["description"] as String,
@@ -34,14 +35,15 @@ class IssueShortMapper{
                     downloadUrl = map["download_url"] as String
             )
         }
+
         fun modelToMap(issueShort: IssueShort): Map<String, String?> {
             return mapOf(
-                "title" to issueShort.title,
-                "description" to issueShort.description,
-                "deadline" to issueShort.deadline,
-                "published_by" to issueShort.publishedBy,
-                "file_name" to issueShort.fileName,
-                "download_url" to issueShort.downloadUrl
+                    "title" to issueShort.title,
+                    "description" to issueShort.description,
+                    "deadline" to issueShort.deadline,
+                    "published_by" to issueShort.publishedBy,
+                    "file_name" to issueShort.fileName,
+                    "download_url" to issueShort.downloadUrl
             )
         }
     }

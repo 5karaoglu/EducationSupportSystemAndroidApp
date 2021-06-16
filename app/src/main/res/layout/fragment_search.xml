@@ -13,6 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -53,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/appBarLayout"
-        tools:listitem="@layout/search_single_item"/>
+        tools:listitem="@layout/search_single_item" />
 
     <TextView
         android:visibility="gone"
@@ -63,12 +64,13 @@
         android:layout_below="@id/appBarLayout"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
-        android:text="There is no results here."/>
+        android:text="There is no results here." />
+
     <ProgressBar
         android:visibility="gone"
         android:id="@+id/pb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

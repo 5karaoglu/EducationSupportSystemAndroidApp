@@ -4,9 +4,6 @@ import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.PropertyName
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.parcel.RawValue
-import java.io.Serializable
-import java.sql.Timestamp
 
 @IgnoreExtraProperties
 @Parcelize
@@ -14,7 +11,7 @@ data class FeedItem(
         var path: String = "",
         @get:PropertyName("class_name")
         @set:PropertyName("class_name")
-        var className:String = "",
+        var className: String = "",
         val title: String = "",
         val description: String = "",
         @get:PropertyName("download_url")
@@ -35,7 +32,7 @@ data class FeedItem(
         val deadline: String = "",
         var commentsCount: String = "",
         var submitsCount: String = ""
-):Parcelable
+) : Parcelable
 
 /*
 class FeedMapper{

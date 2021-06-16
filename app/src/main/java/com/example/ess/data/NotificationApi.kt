@@ -13,9 +13,9 @@ const val contentType = "application/json"
 interface NotificationApi {
 
 
-    @Headers("Authorization: key=$serverKey","Content-Type:$contentType")
+    @Headers("Authorization: key=$serverKey", "Content-Type:$contentType")
     @POST("/fcm/send")
     suspend fun postNotification(
-        @Body notification: PushNotification
+            @Body notification: PushNotification
     ): Response<ResponseBody>
 }

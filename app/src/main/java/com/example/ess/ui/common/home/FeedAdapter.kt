@@ -1,12 +1,12 @@
 package com.example.ess.ui.common.home
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.bold
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,30 +16,31 @@ import com.example.ess.model.FeedItem
 import com.example.ess.util.Functions
 import com.squareup.picasso.Picasso
 
-class FeedAdapter (
+class FeedAdapter(
         private val listener: OnItemClickListener
-): ListAdapter<FeedItem, FeedAdapter.FeedViewHolder>(FeedComparator()) {
+) : ListAdapter<FeedItem, FeedAdapter.FeedViewHolder>(FeedComparator()) {
 
 
-    class FeedViewHolder(private val binding: HomeSingleItemBinding): RecyclerView.ViewHolder(binding.root){
+    class FeedViewHolder(private val binding: HomeSingleItemBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(feedItem: FeedItem, listener: OnItemClickListener){
+        fun bind(feedItem: FeedItem, listener: OnItemClickListener) {
             Log.d("debug", "bind: binded")
             binding.tvName.text = feedItem.publishedBy
-            if (feedItem.downloadUrl.isNotEmpty() or feedItem.fileName.isNotEmpty()){
+            if (feedItem.downloadUrl.isNotEmpty() or feedItem.fileName.isNotEmpty()) {
                 binding.btnAttachedFile.visibility = View.VISIBLE
                 binding.btnAttachedFile.text = feedItem.fileName
             }
-            if (Functions.isTimesUp(feedItem.deadline)){
-                binding.feedHeader.setBackgroundResource(R.drawable.border3)
-            }
-            binding.tvClassName.text = feedItem.className
-            binding.tvLastDeliveryTime.text = "Deadline: " + feedItem.deadline.let { Functions.tsToDate(it) }
+            binding.tvClassName.text = SpannableStringBuilder()
+                    .append("Class: ")
+                    .bold { append(feedItem.className) }
+            binding.tvLastDeliveryTime.text = SpannableStringBuilder()
+                    .append("Deadline: ")
+                    .append(feedItem.deadline.let { Functions.tsToDate(it) })
             binding.tvDescription.text = feedItem.description
             binding.tvTitle.text = feedItem.title
             binding.tvSubmits.text = feedItem.submitsCount
             binding.tvComments.text = feedItem.commentsCount
-            if (feedItem.publisherImageUrl.isNotEmpty()){
+            if (feedItem.publisherImageUrl.isNotEmpty()) {
                 Picasso.get()
                         .load(feedItem.publisherImageUrl)
                         .error(R.drawable.ic_outline_person_24)
@@ -62,20 +63,19 @@ class FeedAdapter (
         }
     }
 
-    
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        return FeedViewHolder( HomeSingleItemBinding.inflate(LayoutInflater.from(parent.context),
-                parent,false))
+        return FeedViewHolder(HomeSingleItemBinding.inflate(LayoutInflater.from(parent.context),
+                parent, false))
     }
-
 
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val currentFeedItem = getItem(position)
-        holder.bind(currentFeedItem,listener)
+        holder.bind(currentFeedItem, listener)
     }
-    class FeedComparator(): DiffUtil.ItemCallback<FeedItem>(){
+
+    class FeedComparator() : DiffUtil.ItemCallback<FeedItem>() {
         override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
             return oldItem === newItem
         }
@@ -85,7 +85,8 @@ class FeedAdapter (
         }
 
     }
-    interface OnItemClickListener{
+
+    interface OnItemClickListener {
         fun onViewClicked(feedItem: FeedItem)
         fun onCommentsClicked(feedItem: FeedItem)
         fun onSubmitsClicked(feedItem: FeedItem)
